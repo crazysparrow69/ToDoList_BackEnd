@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
-const handleRegistration = async (req, res) => {
+const registerUser = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -29,6 +29,28 @@ const handleRegistration = async (req, res) => {
   }
 };
 
+const getOneUser = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) res.status(404).json({ message: 'Could not find' });
+
+    const { password, ...userData } = user._doc;
+    res.json(userData);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Could not log in",
+    });
+  }
+};
+
+const changeUserData = (req, res) => {};
+
+const deleteUser = (req, res) => {};
+
 module.exports = {
-  handleRegistration
+  registerUser,
+  getOneUser,
+  changeUserData,
+  deleteUser
 };
