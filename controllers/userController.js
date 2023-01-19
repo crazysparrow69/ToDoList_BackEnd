@@ -39,18 +39,45 @@ const getOneUser = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not log in",
+      message: "Internal server error",
     });
   }
 };
 
-const changeUserData = (req, res) => {};
+const updateUser = async (req, res) => {
+  try {
+
+    let hashedPassword = undefined;
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      hashedPassword = await bcrypt.hash(req.body.password, salt); 
+    }
+    await User.updateOne(
+      {
+        _id: req.params.id
+      },
+      {
+        username: req.body.username,
+        password: hashedPassword,
+        email: req.body.email,
+        avatarUrl: req.body.avatarUrl
+      }
+    );
+
+    res.json({ message: 'Success' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Could not update",
+    });
+  }
+};
 
 const deleteUser = (req, res) => {};
 
 module.exports = {
   registerUser,
   getOneUser,
-  changeUserData,
+  updateUser,
   deleteUser
 };
