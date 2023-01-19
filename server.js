@@ -10,7 +10,7 @@ const PORT = 5000;
 app.use(express.json());
 
 // Routing
-app.use('/register', require('./routes/registerRoute'));
+app.use('/user', require('./routes/userRoute'));
 app.use('/auth', require('./routes/authRoute'));
 
 // Connecting
