@@ -18,12 +18,12 @@ const getOneUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.json(users)
+    res.json(users);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Could not find' });
   }
-}
+};
 
 const createUser = async (req, res) => {
   try {
@@ -38,7 +38,7 @@ const createUser = async (req, res) => {
       username: req.body.username,
       avatarUrl: req.body.avatarUrl,
       password: hashedPassword
-    })
+    });
 
     const user = await doc.save();
 
