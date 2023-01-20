@@ -12,6 +12,6 @@ const {
 router.post("/", verifyJWT, createTaskValidation, createTask);
 router.get("/", getAllTasks);
 router.get("/:id", getTask);
-router.delete("/:id", deleteTask);
+router.delete("/:id", verifyJWT, deleteTask);
 
 module.exports = router;
