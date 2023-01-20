@@ -67,8 +67,8 @@ const deleteTask = async (req, res) => {
       if (err) return res.status(500).json({ message: "Cannot delete task" });
       if (!doc)
         return res.status(404).json({ message: "Task cannot be found" });
-      res.json({ success: true });
     });
+    res.json({ success: true });
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -77,4 +77,31 @@ const deleteTask = async (req, res) => {
   }
 };
 
-module.exports = { createTask, getAllTasks, getTask, deleteTask };
+const updateTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    if (!taskId) return res.statys(400).json({ message: "Id required" });
+    Task.findOneAndUpdate(
+      { _id: taskId },
+      {
+        title: req.body.title,
+        description: req.body.description,
+        categories: req.body.categories,
+        deadline: req.body.deadline,
+      },
+      function (err, doc) {
+        if (err) return res.status(500).json({ message: "Cannot update task" });
+        if (!doc)
+          return res.status(404).json({ message: "Task cannot be found" });
+      }
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Could not update task",
+    });
+  }
+};
+
+module.exports = { createTask, getAllTasks, getTask, deleteTask, updateTask };

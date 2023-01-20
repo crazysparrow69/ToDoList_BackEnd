@@ -26,9 +26,19 @@ const createTaskValidation = [
   body("deadline", "For deadline use Date").optional().isDate(),
 ];
 
+const updateTaskValidation = [
+  body("title", "Enter title").optional().isString().isLength({ min: 3 }),
+  body("description", "Enter description")
+    .optional()
+    .isString()
+    .isLength({ min: 3 }),
+  body("categories", "Categories must be array").optional().isArray(),
+  body("deadline", "For deadline use Date").optional().isDate(),
+];
 module.exports = {
   registerValidation,
   authValidation,
   updateUserValidation,
   createTaskValidation,
+  updateTaskValidation,
 };
