@@ -16,6 +16,7 @@ const createTask = async (req, res) => {
       categories: req.body.categories,
       user: req.userId,
       deadline: req.deadline || null,
+      isCompleted: req.body.isCompleted,
     });
 
     const task = await doc.save();

@@ -15,6 +15,10 @@ const taskSchema = new Schema(
       type: Array,
       default: [],
     },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
     deadline: Date,
     user: {
       type: mongoose.Schema.Types.ObjectId,
