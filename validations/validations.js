@@ -19,7 +19,7 @@ const updateUserValidation = [
   body("avatarUrl", "Incorrect avatarUrl").optional().isURL(),
 ];
 
-const taskValidation = [
+const createTaskValidation = [
   body("title", "Enter title").isLength({ min: 3 }).isString(),
   body("description", "Enter description").isLength({ min: 3 }).isString(),
   body("categories", "Categories must be array").optional().isArray(),
@@ -30,5 +30,5 @@ module.exports = {
   registerValidation,
   authValidation,
   updateUserValidation,
-  taskValidation,
+  createTaskValidation,
 };

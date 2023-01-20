@@ -1,7 +1,15 @@
+const { validationResult } = require("express-validator");
 const Task = require("../models/Task");
 
 const createTask = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: "Incorrect data", errors: errors.array() });
+    }
+
     const doc = new Task({
       title: req.body.title,
       description: req.body.description,
