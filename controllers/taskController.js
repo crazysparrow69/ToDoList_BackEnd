@@ -13,8 +13,9 @@ const createTask = async (req, res) => {
     const doc = new Task({
       title: req.body.title,
       description: req.body.description,
-      categories: req.body.tags,
+      categories: req.body.categories,
       user: req.userId,
+      deadline: req.deadline || null,
     });
 
     const task = await doc.save();

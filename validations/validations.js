@@ -20,8 +20,8 @@ const updateUserValidation = [
 ];
 
 const createTaskValidation = [
-  body("title", "Enter title").isLength({ min: 3 }),
-  body("description", "Enter description").isLength({ min: 3 }),
+  body("title", "Enter title").isString().isLength({ min: 3 }),
+  body("description", "Enter description").isString().isLength({ min: 3 }),
   body("categories", "Categories must be array").optional().isArray(),
   body("deadline", "For deadline use Date").optional().isDate(),
 ];
