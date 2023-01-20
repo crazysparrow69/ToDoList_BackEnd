@@ -29,4 +29,52 @@ const createTask = async (req, res) => {
   }
 };
 
-module.exports = { createTask };
+const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find().populate("user");
+    res.json(tasks);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Could not get tasks",
+    });
+  }
+};
+
+const getTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    if (!taskId) return res.statys(400).json({ message: "Id required" });
+    Task.findOne({ _id: taskId }, function (err, doc) {
+      if (err) return res.status(500).json({ message: "Cannot return task" });
+      if (!doc)
+        return res.status(404).json({ message: "Task cannot be found" });
+      res.json(doc);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Could not get task",
+    });
+  }
+};
+
+const deleteTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    if (!taskId) return res.statys(400).json({ message: "Id required" });
+    Task.findOneAndDelete({ _id: taskId }, function (err, doc) {
+      if (err) return res.status(500).json({ message: "Cannot delete task" });
+      if (!doc)
+        return res.status(404).json({ message: "Task cannot be found" });
+      res.json({ success: true });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Could not delete task",
+    });
+  }
+};
+
+module.exports = { createTask, getAllTasks, getTask, deleteTask };
