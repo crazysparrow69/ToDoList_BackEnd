@@ -19,7 +19,7 @@ const PORT = 5000;
 
 // Built-in middleware for json
 app.use(express.json());
-
+app.use("/uploads", express.static("uploads"));
 // Routing
 app.use("/user", require("./routes/userRoute"));
 app.use("/auth", require("./routes/authRoute"));
