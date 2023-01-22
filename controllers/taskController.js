@@ -43,7 +43,8 @@ const createTask = async (req, res) => {
 // };
 
 const getAllTasks = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, ...params } = req.query;
+  console.log(params);
 
   try {
     const count = await Task.countDocuments();
@@ -53,7 +54,8 @@ const getAllTasks = async (req, res) => {
         message: "Tasks page not found",
         totalPages,
       });
-    const tasks = await Task.find()
+    
+    const tasks = await Task.find(params)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
