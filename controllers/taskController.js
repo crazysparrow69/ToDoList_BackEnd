@@ -55,7 +55,8 @@ const getAllTasks = async (req, res) => {
         totalPages,
       });
     
-    const tasks = await Task.find(params)
+    const tasks = await Task
+      .find({ user: req.userId, ...params })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
