@@ -44,10 +44,9 @@ const createTask = async (req, res) => {
 
 const getAllTasks = async (req, res) => {
   const { page = 1, limit = 10, ...params } = req.query;
-  console.log(params);
 
   try {
-    const count = await Task.countDocuments();
+    const count = await Task.countDocuments({ user: req.userId, ...params });
     const totalPages = Math.ceil(count / limit);
     if (page > totalPages)
       return res.status(404).json({
