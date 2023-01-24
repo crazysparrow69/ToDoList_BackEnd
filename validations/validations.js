@@ -37,10 +37,23 @@ const updateTaskValidation = [
   body("deadline", "For deadline use Date").optional().isDate(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
 ];
+
+const createCategoryValidation = [
+  body("title", "Enter title").isString().isLength({ min: 3 }),
+  body("color", "Enter color").isString().isLength({ min: 3 }),
+];
+
+const updateCategoryValidation = [
+  body("title", "Enter title").isString().isLength({ min: 3 }).optional(),
+  body("color", "Enter color").isString().isLength({ min: 3 }).optional(),
+];
+
 module.exports = {
   registerValidation,
   authValidation,
   updateUserValidation,
   createTaskValidation,
   updateTaskValidation,
+  createCategoryValidation,
+  updateCategoryValidation,
 };
