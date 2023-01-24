@@ -51,6 +51,13 @@ const getCategories = async (req, res) => {
 
 const createCategory = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: "Incorrect data", errors: errors.array() });
+    }
+
     const doc = new Category({
       title: req.body.title,
       color: req.body.color,
@@ -71,6 +78,12 @@ const createCategory = async (req, res) => {
 const updateCategory = async (req, res) => {
   try {
     if (!req.params.id) return res.status(400).json({ message: 'Id required' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: "Incorrect data", errors: errors.array() });
+    }
 
     const category = await Category.findOneAndUpdate(
       { _id: req.params.id },
