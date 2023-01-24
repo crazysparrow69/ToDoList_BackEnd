@@ -30,18 +30,6 @@ const createTask = async (req, res) => {
   }
 };
 
-// const getAllTasks = async (req, res) => {
-//   try {
-//     const tasks = await Task.find().populate("user");
-//     res.json(tasks);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({
-//       message: "Could not get tasks",
-//     });
-//   }
-// };
-
 const getAllTasks = async (req, res) => {
   const { page = 1, limit = 10, ...params } = req.query;
 
