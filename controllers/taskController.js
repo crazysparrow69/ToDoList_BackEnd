@@ -30,30 +30,20 @@ const createTask = async (req, res) => {
   }
 };
 
-// const getAllTasks = async (req, res) => {
-//   try {
-//     const tasks = await Task.find().populate("user");
-//     res.json(tasks);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({
-//       message: "Could not get tasks",
-//     });
-//   }
-// };
-
 const getAllTasks = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, ...params } = req.query;
 
   try {
-    const count = await Task.countDocuments();
+    const count = await Task.countDocuments({ user: req.userId, ...params });
     const totalPages = Math.ceil(count / limit);
     if (page > totalPages)
       return res.status(404).json({
         message: "Tasks page not found",
         totalPages,
       });
-    const tasks = await Task.find()
+    
+    const tasks = await Task
+      .find({ user: req.userId, ...params })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();

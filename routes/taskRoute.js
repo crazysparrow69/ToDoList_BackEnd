@@ -14,8 +14,8 @@ const {
 } = require("../controllers/taskController");
 
 router.post("/", verifyJWT, createTaskValidation, createTask);
-router.get("/", getAllTasks);
-router.get("/:id", getTask);
+router.get("/", verifyJWT, getAllTasks);
+router.get("/:id", verifyJWT, getTask);
 router.delete("/:id", verifyJWT, deleteTask);
 router.patch("/:id", verifyJWT, updateTaskValidation, updateTask);
 
