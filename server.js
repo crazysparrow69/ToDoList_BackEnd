@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const cors = require("cors");
 
 // Global variables
 const app = express();
@@ -19,6 +20,7 @@ const PORT = 5000;
 
 // Built-in middleware for json
 app.use(express.json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 // Routing
 app.use("/user", require("./routes/userRoute"));
