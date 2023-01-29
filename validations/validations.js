@@ -2,8 +2,8 @@ const { body } = require("express-validator");
 
 const registerValidation = [
   body("email", "Incorrect email").isEmail(),
-  body("password", "Incorrect password").isLength({ min: 5 }),
-  body("username", "Incorrect username").isLength({ min: 3 }),
+  body("firstPass", "Incorrect password").isLength({ min: 5 }),
+  body("lastname", "Incorrect username").isLength({ min: 3 }),
   body("avatarUrl", "Incorrect avatarUrl").optional().isURL(),
 ];
 
