@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 
 const getOneUser = async (req, res) => {
   try {
@@ -33,19 +34,30 @@ const createUser = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
 
+    console.log(req.body);
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const hashedPassword = await bcrypt.hash(req.body.firstPass, salt);
 
     const doc = new User({
       email: req.body.email,
-      username: req.body.username,
+      username: req.body.lastname,
       avatarUrl: req.body.avatarUrl,
       password: hashedPassword,
     });
 
     const user = await doc.save();
 
-    res.json(user);
+    console.log(user)
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      "secret123",
+      { expiresIn: "30d" }
+    );
+    
+    const { password, ...userData } = user._doc;
+    res.json({ ...userData, token });
   } catch (err) {
     res.status(500).json({ message: "Could not register" });
   }
