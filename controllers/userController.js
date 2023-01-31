@@ -38,6 +38,10 @@ const createUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.firstPass, salt);
 
+    const foundUser = User.findOne({ email: req.body.email });
+    if (foundUser)
+      return res.status(400).json({ message: "Email already in use" });
+
     const doc = new User({
       email: req.body.email,
       username: req.body.lastname,
