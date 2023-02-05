@@ -35,6 +35,12 @@ const getAllTasks = async (req, res) => {
 
   try {
     const count = await Task.countDocuments({ user: req.userId, ...params });
+    if (count === 0) return res.json({
+      categories: [],
+      totalPages: 0,
+      currentPage: 1
+    });
+     
     const totalPages = Math.ceil(count / limit);
     if (page > totalPages)
       return res.status(404).json({
