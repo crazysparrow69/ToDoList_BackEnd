@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const Category = require("../models/Category");
+const Task = require('../models/Task');
 
 const getOneCategory = async (req, res) => {
   try {
@@ -118,11 +119,13 @@ const updateCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
   try {
-    if (!req.params.id) return res.status(400).json({ message: 'Id required' });
+    const categoryId = req.params.id;
+    if (!categoryId) return res.status(400).json({ message: 'Id required' });
 
-    const category = await Category.findOneAndDelete({ _id: req.params.id });
-
+    const category = await Category.findOneAndDelete({ _id: categoryId });
     if (!category) return res.status(404).json({ message: 'Could not find' });
+
+    const categoryTasks = await Task.deleteMany({ categories: categoryId });
 
     res.json(category);
   } catch (err) {
