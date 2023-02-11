@@ -48,6 +48,10 @@ const updateCategoryValidation = [
   body("color", "Enter color").isString().isLength({ min: 3 }).optional(),
 ];
 
+const verifyPassValidation = [
+  body("password", "Enter password").isString().isLength({ min: 5 })
+];
+
 module.exports = {
   registerValidation,
   authValidation,
@@ -56,4 +60,5 @@ module.exports = {
   updateTaskValidation,
   createCategoryValidation,
   updateCategoryValidation,
+  verifyPassValidation
 };
