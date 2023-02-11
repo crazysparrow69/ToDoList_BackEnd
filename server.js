@@ -28,6 +28,7 @@ app.use("/user", require("./routes/userRoute"));
 app.use("/auth", require("./routes/authRoute"));
 app.use("/task", require("./routes/taskRoute"));
 app.use("/category", require("./routes/categoryRoute"));
+app.use("/password", require("./routes/passwordRoute"));
 app.post("/upload", upload.single("image"), (req, res) => {
   res.json({
     url: `/uploads/${req.file.originalname}`,
