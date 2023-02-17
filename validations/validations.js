@@ -16,7 +16,7 @@ const updateUserValidation = [
   body("email", "Incorrect email").optional().isEmail(),
   body("password", "Incorrect password").optional().isLength({ min: 5 }),
   body("username", "Incorrect username").optional().isLength({ min: 3 }),
-  body("avatarUrl", "Incorrect avatarUrl").optional().isURL(),
+  body("avatarUrl", "Incorrect avatarUrl").optional(),
 ];
 
 const createTaskValidation = [
