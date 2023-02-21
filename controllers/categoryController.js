@@ -14,7 +14,7 @@ const getOneCategory = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not get category",
+      message: "Internal server error",
     });
   }
 };
@@ -51,7 +51,7 @@ const getCategories = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({
-      message: "Could not get category",
+      message: "Internal server error",
     });
   }
 };
@@ -83,7 +83,7 @@ const createCategory = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not create category",
+      message: "Internal server error",
     });
   }
 };
@@ -112,7 +112,7 @@ const updateCategory = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not update category",
+      message: "Internal server error",
     });
   }
 };
@@ -131,7 +131,7 @@ const deleteCategory = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not delete category",
+      message: "Internal server error",
     });
   }
 };
