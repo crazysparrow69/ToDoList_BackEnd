@@ -19,7 +19,7 @@ const verifyPass = async (req, res) => {
 
     res.json({ message: "Success" });
   } catch (err) {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

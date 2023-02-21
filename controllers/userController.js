@@ -6,23 +6,24 @@ const jwt = require("jsonwebtoken");
 const getOneUser = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
-    if (!user) return res.status(404).json({ message: "Could not find" });
+    if (!user) return res.status(404).json({ message: "Could not find user" });
 
     const { password, ...userData } = user._doc;
     res.json(userData);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Could not find" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
+
     res.json(users);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Could not find" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -34,7 +35,6 @@ const createUser = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
 
-    console.log(req.body);
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.firstPass, salt);
 
@@ -47,7 +47,6 @@ const createUser = async (req, res) => {
 
     const user = await doc.save();
 
-    console.log(user);
     const token = jwt.sign(
       {
         _id: user._id,
@@ -59,7 +58,7 @@ const createUser = async (req, res) => {
     const { password, ...userData } = user._doc;
     res.json({ ...userData, token });
   } catch (err) {
-    res.status(500).json({ message: "Could not register", err: err });
+    res.status(500).json({ message: "Internal server error"});
   }
 };
 
@@ -77,7 +76,7 @@ const updateUser = async (req, res) => {
       hashedPassword = await bcrypt.hash(req.body.password, salt);
     }
 
-    await User.updateOne(
+    const user = await User.findOneAndUpdate(
       {
         _id: req.params.id,
       },
@@ -89,10 +88,12 @@ const updateUser = async (req, res) => {
       }
     );
 
+    if (!user) return res.status(404).json({ message: "Could not find user" });
+
     res.json({ message: "Success" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Could not update" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -100,12 +101,12 @@ const deleteUser = async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ _id: req.params.id });
 
-    if (!user) return res.status(404).json({ message: "Could not find" });
+    if (!user) return res.status(404).json({ message: "Could not find user" });
 
     res.json({ message: "Success" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Could not delete" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

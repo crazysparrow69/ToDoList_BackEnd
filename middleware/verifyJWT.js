@@ -12,7 +12,7 @@ const verifyJWT = (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(403).json({ message: 'shit' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
