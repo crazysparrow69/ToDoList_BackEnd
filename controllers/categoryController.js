@@ -65,11 +65,11 @@ const createCategory = async (req, res) => {
         .json({ message: "Incorrect data", errors: errors.array() });
     }
 
-    // const foundCategory = Category.findOne({ title: req.body.title });
-    // if (foundCategory) {
-    //   console.log(foundCategory)
-    //   return res.status(400).json({ message: "Title already in use" });
-    // }
+    const foundCategory = await Category.findOne({ title: req.body.title });
+    if (foundCategory) {
+      console.log(foundCategory)
+      return res.status(400).json({ message: "Title already in use" });
+    }
 
     const doc = new Category({
       title: req.body.title,
