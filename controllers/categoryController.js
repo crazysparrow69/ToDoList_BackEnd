@@ -8,7 +8,7 @@ const getOneCategory = async (req, res) => {
 
     const category = await Category.findOne({ _id: req.params.id });
 
-    if (!category) return res.status(404).json({ message: 'Could not find' });
+    if (!category) return res.status(404).json({ message: 'Could not find category' });
 
     res.json(category);
   } catch (err) {
@@ -33,7 +33,7 @@ const getCategories = async (req, res) => {
     const totalPages = Math.ceil(count / limit);
     if (page > totalPages)
       return res.status(404).json({
-        message: "Categories page not found",
+        message: "Categories' page not found",
         totalPages,
       });
     
@@ -106,7 +106,7 @@ const updateCategory = async (req, res) => {
       },
     );
 
-    if (!category) return res.status(404).json({ message: 'Could not find' });
+    if (!category) return res.status(404).json({ message: 'Could not find category' });
 
     res.json(category);
   } catch (err) {
@@ -123,7 +123,7 @@ const deleteCategory = async (req, res) => {
     if (!categoryId) return res.status(400).json({ message: 'Id required' });
 
     const category = await Category.findOneAndDelete({ _id: categoryId });
-    if (!category) return res.status(404).json({ message: 'Could not find' });
+    if (!category) return res.status(404).json({ message: 'Could not find category' });
 
     const categoryTasks = await Task.deleteMany({ categories: categoryId });
 
