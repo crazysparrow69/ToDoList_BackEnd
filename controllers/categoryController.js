@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const Category = require("../models/Category");
-const Task = require('../models/Task');
+const Task = require("../models/Task");
 
 const getOneCategory = async (req, res) => {
   try {
@@ -8,7 +8,8 @@ const getOneCategory = async (req, res) => {
 
     const category = await Category.findOne({ _id: req.params.id });
 
-    if (!category) return res.status(404).json({ message: 'Could not find category' });
+    if (!category)
+      return res.status(404).json({ message: "Could not find category" });
 
     res.json(category);
   } catch (err) {
@@ -23,12 +24,16 @@ const getCategories = async (req, res) => {
   const { page = 1, limit = 10, ...params } = req.query;
 
   try {
-    const count = await Category.countDocuments({ user: req.userId, ...params });
-    if (count === 0) return res.json({
-      categories: [],
-      totalPages: 0,
-      currentPage: 1
+    const count = await Category.countDocuments({
+      user: req.userId,
+      ...params,
     });
+    if (count === 0)
+      return res.json({
+        categories: [],
+        totalPages: 0,
+        currentPage: 1,
+      });
 
     const totalPages = Math.ceil(count / limit);
     if (page > totalPages)
@@ -36,9 +41,8 @@ const getCategories = async (req, res) => {
         message: "Categories' page not found",
         totalPages,
       });
-    
-    const categories = await Category
-      .find({ user: req.userId, ...params })
+
+    const categories = await Category.find({ user: req.userId, ...params })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -67,14 +71,14 @@ const createCategory = async (req, res) => {
 
     const foundCategory = await Category.findOne({ title: req.body.title });
     if (foundCategory) {
-      console.log(foundCategory)
+      console.log(foundCategory);
       return res.status(400).json({ message: "Title already in use" });
     }
 
     const doc = new Category({
       title: req.body.title,
       color: req.body.color,
-      user: req.userId
+      user: req.userId,
     });
 
     const category = await doc.save();
@@ -90,7 +94,7 @@ const createCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
   try {
-    if (!req.params.id) return res.status(400).json({ message: 'Id required' });
+    if (!req.params.id) return res.status(400).json({ message: "Id required" });
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
@@ -102,11 +106,12 @@ const updateCategory = async (req, res) => {
       { _id: req.params.id },
       {
         title: req.body.title,
-        color: req.body.color
-      },
+        color: req.body.color,
+      }
     );
 
-    if (!category) return res.status(404).json({ message: 'Could not find category' });
+    if (!category)
+      return res.status(404).json({ message: "Could not find category" });
 
     res.json(category);
   } catch (err) {
@@ -120,10 +125,11 @@ const updateCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    if (!categoryId) return res.status(400).json({ message: 'Id required' });
+    if (!categoryId) return res.status(400).json({ message: "Id required" });
 
     const category = await Category.findOneAndDelete({ _id: categoryId });
-    if (!category) return res.status(404).json({ message: 'Could not find category' });
+    if (!category)
+      return res.status(404).json({ message: "Could not find category" });
 
     const categoryTasks = await Task.deleteMany({ categories: categoryId });
 
@@ -141,5 +147,5 @@ module.exports = {
   getCategories,
   createCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
 };
