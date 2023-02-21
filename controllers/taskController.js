@@ -25,7 +25,7 @@ const createTask = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not create task",
+      message: "Internal server error",
     });
   }
 };
@@ -62,7 +62,7 @@ const getAllTasks = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({
-      message: "Could not get tasks",
+      message: "Internal server error",
     });
   }
 };
@@ -71,16 +71,19 @@ const getTask = async (req, res) => {
   try {
     const taskId = req.params.id;
     if (!taskId) return res.statys(400).json({ message: "Id required" });
+
     Task.findOne({ _id: taskId }, function (err, doc) {
-      if (err) return res.status(500).json({ message: "Cannot return task" });
+      if (err) return res.status(500).json({ message: "Internal server error" });
       if (!doc)
-        return res.status(404).json({ message: "Task cannot be found" });
+        return res.status(404).json({ message: "Could not find task" });
+
       res.json(doc);
     });
+
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not get task",
+      message: "Internal server error",
     });
   }
 };
@@ -89,16 +92,18 @@ const deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
     if (!taskId) return res.statys(400).json({ message: "Id required" });
+
     Task.findOneAndDelete({ _id: taskId }, function (err, doc) {
-      if (err) return res.status(500).json({ message: "Cannot delete task" });
+      if (err) return res.status(500).json({ message: "Internal server error" });
       if (!doc)
-        return res.status(404).json({ message: "Task cannot be found" });
+        return res.status(404).json({ message: "Could not find task" });
     });
+
     res.json({ success: true });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not delete task",
+      message: "Internal server error",
     });
   }
 };
@@ -107,6 +112,7 @@ const updateTask = async (req, res) => {
   try {
     const taskId = req.params.id;
     if (!taskId) return res.statys(400).json({ message: "Id required" });
+
     Task.findOneAndUpdate(
       { _id: taskId },
       {
@@ -116,16 +122,17 @@ const updateTask = async (req, res) => {
         deadline: req.body.deadline,
       },
       function (err, doc) {
-        if (err) return res.status(500).json({ message: "Cannot update task" });
+        if (err) return res.status(500).json({ message: "Internal server error" });
         if (!doc)
-          return res.status(404).json({ message: "Task cannot be found" });
+          return res.status(404).json({ message: "Could not find task" });
       }
     );
-    res.json({ success: true });
+
+    res.json({ message: "success" });
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not update task",
+      message: "Internal server error",
     });
   }
 };
