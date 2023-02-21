@@ -33,7 +33,7 @@ const handleAuth = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Could not log in",
+      message: "Internal server error",
     });
   }
 };
@@ -52,7 +52,7 @@ const getMe = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: "Access denied",
+      message: "Internal server error",
     });
   }
 };
