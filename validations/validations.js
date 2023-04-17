@@ -34,7 +34,7 @@ const updateTaskValidation = [
     .isString()
     .isLength({ min: 3 }),
   body("categories", "Categories must be array").optional().isArray(),
-  body("deadline", "For deadline use Date").optional().isDate(),
+  body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
 ];
 
