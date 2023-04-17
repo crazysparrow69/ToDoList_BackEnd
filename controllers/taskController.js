@@ -15,7 +15,7 @@ const createTask = async (req, res) => {
       description: req.body.description,
       categories: req.body.categories,
       user: req.userId,
-      deadline: req.deadline ? req.deadline : null,
+      deadline: req.body.deadline ? req.body.deadline : null,
       isCompleted: req.body.isCompleted,
     });
 
