@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const verifyJWT = require("../middleware/verifyJWT.js");
-const {saveImage} = require("../controllers/imageController.js");
+const { saveImage, getImage } = require("../controllers/imageController.js");
 
-router.post("/", verifyJWT, saveImage);
+router.get("/", verifyJWT, getImage)
+      .post("/", verifyJWT, saveImage);
 
 module.exports = router;
