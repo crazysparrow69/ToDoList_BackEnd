@@ -13,7 +13,7 @@ const saveImage = async (req, res) => {
       userId: req.userId
     });
 
-    res.status(201).json({ message: "Image created" });
+    res.status(201).json({ url: createdImage.image });
   } catch (err) {
     res.status(409).json({ message: err.message });
   }
