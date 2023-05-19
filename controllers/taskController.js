@@ -120,6 +120,7 @@ const updateTask = async (req, res) => {
         description: req.body.description,
         categories: req.body.categories,
         deadline: req.body.deadline,
+        isCompleted: req.body.isCompleted
       },
       function (err, doc) {
         if (err) return res.status(500).json({ message: "Internal server error" });
