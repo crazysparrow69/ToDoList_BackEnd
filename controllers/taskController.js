@@ -35,21 +35,21 @@ const getAllTasks = async (req, res) => {
 
   try {
     const count = await Task.countDocuments({ user: req.userId, ...params });
-    if (count === 0) return res.json({
-      categories: [],
-      totalPages: 0,
-      currentPage: 1
-    });
-     
+    if (count === 0)
+      return res.json({
+        categories: [],
+        totalPages: 0,
+        currentPage: 1,
+      });
+
     const totalPages = Math.ceil(count / limit);
     if (page > totalPages)
       return res.status(404).json({
         message: "Tasks page not found",
         totalPages,
       });
-    
-    const tasks = await Task
-      .find({ user: req.userId, ...params })
+
+    const tasks = await Task.find({ user: req.userId, ...params })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -73,13 +73,12 @@ const getTask = async (req, res) => {
     if (!taskId) return res.statys(400).json({ message: "Id required" });
 
     Task.findOne({ _id: taskId }, function (err, doc) {
-      if (err) return res.status(500).json({ message: "Internal server error" });
-      if (!doc)
-        return res.status(404).json({ message: "Could not find task" });
+      if (err)
+        return res.status(500).json({ message: "Internal server error" });
+      if (!doc) return res.status(404).json({ message: "Could not find task" });
 
       res.json(doc);
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -94,9 +93,9 @@ const deleteTask = async (req, res) => {
     if (!taskId) return res.statys(400).json({ message: "Id required" });
 
     Task.findOneAndDelete({ _id: taskId }, function (err, doc) {
-      if (err) return res.status(500).json({ message: "Internal server error" });
-      if (!doc)
-        return res.status(404).json({ message: "Could not find task" });
+      if (err)
+        return res.status(500).json({ message: "Internal server error" });
+      if (!doc) return res.status(404).json({ message: "Could not find task" });
     });
 
     res.json({ success: true });
@@ -120,12 +119,7 @@ const updateTask = async (req, res) => {
         description: req.body.description,
         categories: req.body.categories,
         deadline: req.body.deadline,
-        isCompleted: req.body.isCompleted
-      },
-      function (err, doc) {
-        if (err) return res.status(500).json({ message: "Internal server error" });
-        if (!doc)
-          return res.status(404).json({ message: "Could not find task" });
+        isCompleted: req.body.isCompleted,
       }
     );
 
@@ -138,4 +132,40 @@ const updateTask = async (req, res) => {
   }
 };
 
-module.exports = { createTask, getAllTasks, getTask, deleteTask, updateTask };
+const shareTask = async (req, res) => {
+  try {
+    if (!req.params.id) return res.status(400).json({ message: "Id required" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: "Incorrect data", errors: errors.array() });
+    }
+
+    const foundTask = await Task.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        sharedWith: req.body.sharedWith,
+      },
+    );
+
+    if (!foundTask)
+      return res.status(404).json({ message: "Could not find the task" });
+
+    res.json(foundTask);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = {
+  createTask,
+  getAllTasks,
+  getTask,
+  deleteTask,
+  updateTask,
+  shareTask,
+};
