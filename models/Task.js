@@ -15,6 +15,10 @@ const taskSchema = new Schema(
       type: Array,
       default: [],
     },
+    sharedWith: {
+      type: Array,
+      default: []
+    },
     isCompleted: {
       type: Boolean,
       default: false,
