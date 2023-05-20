@@ -38,6 +38,10 @@ const updateTaskValidation = [
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
 ];
 
+const shareTaskValidation = [
+  body("sharedWith", "Requires id of the user you want to share the task with").isArray()
+];
+
 const createCategoryValidation = [
   body("title", "Enter title").isString().isLength({ min: 3 }),
   body("color", "Enter color").isString().isLength({ min: 3 }),
@@ -58,6 +62,7 @@ module.exports = {
   updateUserValidation,
   createTaskValidation,
   updateTaskValidation,
+  shareTaskValidation,
   createCategoryValidation,
   updateCategoryValidation,
   verifyPassValidation
