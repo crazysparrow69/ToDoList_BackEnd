@@ -2,8 +2,8 @@ const { body } = require("express-validator");
 
 const registerValidation = [
   body("email", "Incorrect email").isEmail(),
-  body("password", "Incorrect password").isLength({ min: 5 }),
-  body("username", "Incorrect username").isLength({ min: 3 }),
+  body("firstPass", "Incorrect password").isLength({ min: 5 }),
+  body("login", "Incorrect username").isLength({ min: 3 }),
   body("avatarUrl", "Incorrect avatarUrl").optional().isURL(),
 ];
 
@@ -16,14 +16,14 @@ const updateUserValidation = [
   body("email", "Incorrect email").optional().isEmail(),
   body("password", "Incorrect password").optional().isLength({ min: 5 }),
   body("username", "Incorrect username").optional().isLength({ min: 3 }),
-  body("avatarUrl", "Incorrect avatarUrl").optional().isURL(),
+  body("avatarUrl", "Incorrect avatarUrl").optional(),
 ];
 
 const createTaskValidation = [
   body("title", "Enter title").isString().isLength({ min: 3 }),
   body("description", "Enter description").isString().isLength({ min: 3 }),
   body("categories", "Categories must be array").optional().isArray(),
-  body("deadline", "For deadline use Date").optional().isDate(),
+  body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
 ];
 
@@ -34,7 +34,7 @@ const updateTaskValidation = [
     .isString()
     .isLength({ min: 3 }),
   body("categories", "Categories must be array").optional().isArray(),
-  body("deadline", "For deadline use Date").optional().isDate(),
+  body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
 ];
 
@@ -48,6 +48,10 @@ const updateCategoryValidation = [
   body("color", "Enter color").isString().isLength({ min: 3 }).optional(),
 ];
 
+const verifyPassValidation = [
+  body("password", "Enter password").isString().isLength({ min: 5 })
+];
+
 module.exports = {
   registerValidation,
   authValidation,
@@ -56,4 +60,5 @@ module.exports = {
   updateTaskValidation,
   createCategoryValidation,
   updateCategoryValidation,
+  verifyPassValidation
 };
