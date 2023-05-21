@@ -70,9 +70,9 @@ const getAllTasks = async (req, res) => {
 const getTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    if (!taskId) return res.statys(400).json({ message: "Id required" });
+    if (!taskId) return res.status(400).json({ message: "Id required" });
 
-    Task.findOne({ _id: taskId }, function (err, doc) {
+    await Task.findOne({ _id: taskId }, function (err, doc) {
       if (err)
         return res.status(500).json({ message: "Internal server error" });
       if (!doc) return res.status(404).json({ message: "Could not find task" });
@@ -90,9 +90,9 @@ const getTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    if (!taskId) return res.statys(400).json({ message: "Id required" });
+    if (!taskId) return res.status(400).json({ message: "Id required" });
 
-    Task.findOneAndDelete({ _id: taskId }, function (err, doc) {
+    await Task.findOneAndDelete({ _id: taskId }, function (err, doc) {
       if (err)
         return res.status(500).json({ message: "Internal server error" });
       if (!doc) return res.status(404).json({ message: "Could not find task" });
@@ -110,9 +110,9 @@ const deleteTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    if (!taskId) return res.statys(400).json({ message: "Id required" });
+    if (!taskId) return res.status(400).json({ message: "Id required" });
 
-    Task.findOneAndUpdate(
+    await Task.findOneAndUpdate(
       { _id: taskId },
       {
         title: req.body.title,
