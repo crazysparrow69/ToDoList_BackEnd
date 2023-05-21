@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createTaskValidation,
   updateTaskValidation,
+  shareTaskValidation
 } = require("../validations/validations");
 const verifyJWT = require("../middleware/verifyJWT");
 const {
@@ -11,12 +12,14 @@ const {
   getTask,
   deleteTask,
   updateTask,
+  shareTask
 } = require("../controllers/taskController");
 
-router.post("/", verifyJWT, createTaskValidation, createTask);
-router.get("/", verifyJWT, getAllTasks);
-router.get("/:id", verifyJWT, getTask);
-router.delete("/:id", verifyJWT, deleteTask);
-router.patch("/:id", verifyJWT, updateTaskValidation, updateTask);
+router.post("/", verifyJWT, createTaskValidation, createTask)
+      .get("/", verifyJWT, getAllTasks)
+      .get("/:id", verifyJWT, getTask)
+      .delete("/:id", verifyJWT, deleteTask)
+      .patch("/:id", verifyJWT, updateTaskValidation, updateTask)
+      .patch("/share/:id", verifyJWT, shareTaskValidation, shareTask);
 
 module.exports = router;

@@ -69,7 +69,7 @@ const createCategory = async (req, res) => {
         .json({ message: "Incorrect data", errors: errors.array() });
     }
 
-    const foundCategory = await Category.findOne({ title: req.body.title });
+    const foundCategory = await Category.findOne({ user: req.userId, title: req.body.title });
     if (foundCategory) {
       console.log(foundCategory);
       return res.status(400).json({ message: "Title already in use" });
@@ -164,7 +164,27 @@ const deleteCategory = async (req, res) => {
     if (!category)
       return res.status(404).json({ message: "Could not find category" });
 
-    const categoryTasks = await Task.deleteMany({ categories: categoryId });
+    const foundTasks = await Task.find({
+      categories: { $elemMatch: { _id: categoryId } },
+    });
+
+    const tasksToUpdate = [];
+
+    foundTasks.forEach((task) => {
+      tasksToUpdate.push({
+        taskId: task._id,
+        categories: task.categories.filter((elem) => elem._id !== categoryId),
+      });
+    });
+
+    tasksToUpdate.forEach(async (task) => {
+      await Task.findOneAndUpdate(
+        { _id: task.taskId },
+        {
+          categories: task.categories,
+        }
+      );
+    });
 
     res.json(category);
   } catch (err) {

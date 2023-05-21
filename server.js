@@ -6,22 +6,11 @@ const cors = require("cors");
 
 // Global variables
 const app = express();
-// const storage = multer.diskStorage({
-//   destination: (_, __, cb) => {
-//     cb(null, "uploads");
-//   },
-//   filename: (_, file, cb) => {
-//     cb(null, file.originalname);
-//   },
-// });
-
-// const upload = multer({ storage });
 const PORT = 5000;
 
 // Built-in middleware
 app.use(express.json());
 app.use(cors());
-// app.use("/uploads", express.static("uploads"));
 
 // Routing
 app.use("/user", require("./routes/userRoute"));
@@ -30,11 +19,7 @@ app.use("/task", require("./routes/taskRoute"));
 app.use("/category", require("./routes/categoryRoute"));
 app.use("/password", require("./routes/passwordRoute"));
 app.use("/upload", require("./routes/imageRoute"));
-// app.post("/upload", upload.single("image"), (req, res) => {
-//   res.json({
-//     url: `/uploads/${req.file.originalname}`,
-//   });
-// });
+
 
 // Connecting
 mongoose.set("strictQuery", false);
