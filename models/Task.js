@@ -23,7 +23,7 @@ const taskSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    deadline: String,
+    deadline: Date,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
