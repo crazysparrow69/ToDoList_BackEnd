@@ -31,7 +31,7 @@ const createTask = async (req, res) => {
 };
 
 const getAllTasks = async (req, res) => {
-  const { page = 1, limit = 10, deadline = "month", ...params } = req.query;
+  const { page = 1, limit = 10, deadline = "all", ...params } = req.query;
 
   try {
     const date = new Date();
