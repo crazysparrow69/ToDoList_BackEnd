@@ -131,13 +131,10 @@ const getTask = async (req, res) => {
     const taskId = req.params.id;
     if (!taskId) return res.status(400).json({ message: "Id required" });
 
-    await Task.findOne({ _id: taskId }, function (err, doc) {
-      if (err)
-        return res.status(500).json({ message: "Internal server error" });
-      if (!doc) return res.status(404).json({ message: "Could not find task" });
+    const foundTask = await Task.findOne({ _id: taskId });
+    if (!foundTask) return res.status(404).json({ message: "Could not find the task" });
 
-      res.json(doc);
-    });
+    res.json(foundTask);
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -151,13 +148,10 @@ const deleteTask = async (req, res) => {
     const taskId = req.params.id;
     if (!taskId) return res.status(400).json({ message: "Id required" });
 
-    await Task.findOneAndDelete({ _id: taskId }, function (err, doc) {
-      if (err)
-        return res.status(500).json({ message: "Internal server error" });
-      if (!doc) return res.status(404).json({ message: "Could not find task" });
-    });
+    const deletedTask = await Task.findOneAndDelete({ _id: taskId });
+    if (!deletedTask) return res.status(404).json({ message: "Could not find the task" });
 
-    res.json({ success: true });
+    res.json(deletedTask);
   } catch (err) {
     console.log(err);
     res.status(500).json({
