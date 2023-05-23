@@ -85,6 +85,13 @@ const getAllTasks = async (req, res) => {
         },
         ...params,
       };
+    } else if (deadline === "outdated") {
+      queryParams = {
+        user: req.userId,
+        deadline: {
+          $lt: todayMidnight,
+        },
+      };
     } else {
       return res.status(404).json({
         message: "Tasks page not found",
