@@ -17,13 +17,20 @@ const taskSchema = new Schema(
     },
     sharedWith: {
       type: Array,
-      default: []
+      default: [],
     },
     isCompleted: {
       type: Boolean,
       default: false,
     },
-    deadline: Date,
+    deadline: {
+      type: Date,
+      default: null,
+    },
+    dateOfCompletion: {
+      type: Date,
+      default: null,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
