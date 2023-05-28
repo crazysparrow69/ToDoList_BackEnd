@@ -20,6 +20,6 @@ router.post("/", verifyJWT, createTaskValidation, createTask)
       .get("/:id", verifyJWT, getTask)
       .delete("/:id", verifyJWT, deleteTask)
       .patch("/:id", verifyJWT, updateTaskValidation, updateTask)
-      .patch("/share/:id", verifyJWT, shareTaskValidation, shareTask);
+      .post("/share/:id", verifyJWT, shareTaskValidation, shareTask);
 
 module.exports = router;
