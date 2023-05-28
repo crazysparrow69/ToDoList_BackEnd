@@ -172,16 +172,37 @@ const updateTask = async (req, res) => {
     const taskId = req.params.id;
     if (!taskId) return res.status(400).json({ message: "Id required" });
 
-    await Task.findOneAndUpdate(
-      { _id: taskId },
-      {
+    let taskData;
+    const isCompleted = req.body.isCompleted;
+
+    if (isCompleted === true) {
+      taskData = {
         title: req.body.title,
         description: req.body.description,
         categories: req.body.categories,
         deadline: req.body.deadline,
-        isCompleted: req.body.isCompleted,
-      }
-    );
+        isCompleted: true,
+        dateOfCompletion: new Date(),
+      };
+    } else if (isCompleted === false) {
+      taskData = {
+        title: req.body.title,
+        description: req.body.description,
+        categories: req.body.categories,
+        deadline: req.body.deadline,
+        isCompleted: false,
+        dateOfCompletion: null,
+      };
+    } else {
+      taskData = {
+        title: req.body.title,
+        description: req.body.description,
+        categories: req.body.categories,
+        deadline: req.body.deadline,
+      };
+    }
+
+    await Task.findOneAndUpdate({ _id: taskId }, taskData);
 
     res.json({ message: "success" });
   } catch (err) {
