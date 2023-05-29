@@ -287,6 +287,8 @@ const getTaskStats = async (req, res) => {
       stats.push(dayStats);
     }
 
+    stats.reverse();
+
     res.json(stats);
   } catch (err) {
     console.log(err);
