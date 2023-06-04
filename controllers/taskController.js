@@ -168,10 +168,17 @@ const deleteTask = async (req, res) => {
 };
 
 const updateTask = async (req, res) => {
-  try {
-    const taskId = req.params.id;
-    if (!taskId) return res.status(400).json({ message: "Id required" });
+  const taskId = req.params.id;
+  if (!taskId) return res.status(400).json({ message: "Id required" });
+  
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(400)
+      .json({ message: "Incorrect data", errors: errors.array() });
+  }
 
+  try {
     let taskData;
     const isCompleted = req.body.isCompleted;
 
