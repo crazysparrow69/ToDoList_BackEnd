@@ -23,9 +23,11 @@ const getImage = async (req, res) => {
   try {
     const foundImage = await Image.find({ userId: req.userId });
 
+    if (!foundImage) return res.status(404).json({ message: "Could not find an image" });
+
     res.json(foundImage);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
