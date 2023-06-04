@@ -43,7 +43,6 @@ const createUser = async (req, res) => {
     const doc = new User({
       email: req.body.email,
       username: req.body.login,
-      avatarUrl: req.body.avatarUrl,
       password: hashedPassword,
     });
 
@@ -89,7 +88,6 @@ const updateUser = async (req, res) => {
         username: req.body.username,
         password: hashedPassword,
         email: req.body.email,
-        avatarUrl: req.body.avatarUrl,
       }
     );
 
