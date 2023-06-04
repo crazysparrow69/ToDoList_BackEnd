@@ -12,14 +12,16 @@ const {
   getTask,
   deleteTask,
   updateTask,
-  shareTask
+  shareTask,
+  getTaskStats
 } = require("../controllers/taskController");
 
 router.post("/", verifyJWT, createTaskValidation, createTask)
       .get("/", verifyJWT, getAllTasks)
+      .get("/stats", verifyJWT, getTaskStats)
       .get("/:id", verifyJWT, getTask)
       .delete("/:id", verifyJWT, deleteTask)
       .patch("/:id", verifyJWT, updateTaskValidation, updateTask)
-      .post("/share/:id", verifyJWT, shareTaskValidation, shareTask);
+      .post("/share/:id", verifyJWT, shareTaskValidation, shareTask)
 
 module.exports = router;
