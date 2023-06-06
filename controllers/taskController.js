@@ -231,21 +231,39 @@ const shareTask = async (req, res) => {
         .json({ message: "Incorrect data", errors: errors.array() });
     }
 
-    const sharedWithUser = User.findById(req.body.sharedWith);
+    const shareToUser = await User.findOne({
+      _id: req.body.shareTo
+    });
 
-    if (!sharedWithUser) return res.status(404).json({ message: "Could not find the user to share the task with"}) 
+    if (!shareToUser)
+      return res
+        .status(404)
+        .json({ message: "Could not find the user to share the task with" });
 
-    const foundTask = await Task.findOneAndUpdate(
-      { _id: req.params.id },
-      {
-        sharedWith: req.body.sharedWith,
-      },
-    );
+    const foundTask = await Task.findOne({
+      user: req.userId,
+      _id: req.params.id,
+    });
 
     if (!foundTask)
       return res.status(404).json({ message: "Could not find the task" });
 
-    res.json(foundTask);
+    const doc = new Task({
+      title: `${foundTask.title} (shared from ${req.body.shareFrom})`,
+      description: foundTask.description,
+      sharedWith: foundTask.sharedWith,
+      isCompleted: false,
+      deadline: foundTask.deadline,
+      dateOfCompletion: null,
+      user: req.body.shareTo,
+    });
+
+    const copiedTask = await doc.save();
+
+    if (!copiedTask)
+      return res.status(400).json({ message: "Could not create copied task" });
+
+    res.json(copiedTask);
   } catch (err) {
     console.log(err);
     res.status(500).json({
