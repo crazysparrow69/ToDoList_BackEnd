@@ -52,7 +52,7 @@ const createUser = async (req, res) => {
       {
         _id: user._id,
       },
-      "secret123",
+      process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "30d" }
     );
 
