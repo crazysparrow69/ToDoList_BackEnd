@@ -11,19 +11,13 @@ const PORT = 5000;
 // Built-in middleware
 app.use(express.json());
 
-const allowedOrigins = ["https://to-do-list-frontend-dev.vercel.app"];
+const corsOptions = {
+  origin: "https://to-do-list-frontend-dev.vercel.app",
+  methods: "GET, POST, PUT, DELETE, OPTIONS",
+  allowedHeaders: "Content-Type, Authorization",
+};
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Access denied by CORS"));
-      }
-    },
-  })
-);
+app.use(cors(corsOptions));
 
 // Routing
 app.use("/user", require("./routes/userRoute"));
