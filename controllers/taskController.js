@@ -232,7 +232,7 @@ const shareTask = async (req, res) => {
     }
 
     const shareToUser = await User.findOne({
-      _id: req.body.shareTo
+      _id: req.body.shareTo,
     });
 
     if (!shareToUser)
@@ -240,10 +240,20 @@ const shareTask = async (req, res) => {
         .status(404)
         .json({ message: "Could not find the user to share the task with" });
 
-    const foundTask = await Task.findOne({
-      user: req.userId,
-      _id: req.params.id,
-    });
+    const foundTask = await Task.findOneAndUpdate(
+      {
+        user: req.userId,
+        _id: req.params.id,
+      },
+      {
+        $push: {
+          sharedWith: {
+            userId: shareToUser._id,
+            username: shareToUser.username,
+          },
+        },
+      }
+    );
 
     if (!foundTask)
       return res.status(404).json({ message: "Could not find the task" });
