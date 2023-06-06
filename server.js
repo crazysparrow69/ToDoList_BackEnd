@@ -2,7 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 
 // Global variables
 const app = express();
@@ -10,7 +10,20 @@ const PORT = 5000;
 
 // Built-in middleware
 app.use(express.json());
-app.use(cors());
+
+const allowedOrigins = ["https://to-do-list-frontend-dev.vercel.app"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Access denied by CORS"));
+      }
+    },
+  })
+);
 
 // Routing
 app.use("/user", require("./routes/userRoute"));
@@ -20,13 +33,10 @@ app.use("/category", require("./routes/categoryRoute"));
 app.use("/password", require("./routes/passwordRoute"));
 app.use("/upload", require("./routes/imageRoute"));
 
-
 // Connecting
 mongoose.set("strictQuery", false);
 mongoose
-  .connect(
-    process.env.DATABASE_URI
-  )
+  .connect(process.env.DATABASE_URI)
   .then(() => {
     console.log("Connected to database");
     app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
