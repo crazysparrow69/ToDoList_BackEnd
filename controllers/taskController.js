@@ -240,6 +240,15 @@ const shareTask = async (req, res) => {
         .status(404)
         .json({ message: "Could not find the user to share the task with" });
 
+    const shareFromUser = await User.findOne({
+      _id: req.userId,
+    });
+
+    if (!shareFromUser)
+      return res
+        .status(404)
+        .json({ message: "Could not find the user to share the task from" });
+
     const foundTask = await Task.findOneAndUpdate(
       {
         user: req.userId,
@@ -259,9 +268,9 @@ const shareTask = async (req, res) => {
       return res.status(404).json({ message: "Could not find the task" });
 
     const doc = new Task({
-      title: `${foundTask.title} (shared from ${req.body.shareFrom})`,
+      title: `${foundTask.title} (shared from ${shareFromUser.username})`,
       description: foundTask.description,
-      sharedWith: foundTask.sharedWith,
+      sharedWith: "already shared",
       isCompleted: false,
       deadline: foundTask.deadline,
       dateOfCompletion: null,
