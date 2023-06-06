@@ -1,5 +1,6 @@
 const { validationResult, query } = require("express-validator");
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 const createTask = async (req, res) => {
   try {
@@ -229,6 +230,10 @@ const shareTask = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
     }
+
+    const sharedWithUser = User.findById(req.body.sharedWith);
+
+    if (!sharedWithUser) return res.status(404).json({ message: "Could not find the user to share the task with"}) 
 
     const foundTask = await Task.findOneAndUpdate(
       { _id: req.params.id },
