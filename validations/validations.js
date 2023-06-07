@@ -39,7 +39,7 @@ const updateTaskValidation = [
 ];
 
 const shareTaskValidation = [
-  body("sharedWith", "Requires id of the user you want to share the task with").isArray()
+  body("shareTo", "Requires id of the user you want to share the task with").isString(),
 ];
 
 const createCategoryValidation = [

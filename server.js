@@ -1,8 +1,8 @@
 // Requires
 const express = require("express");
 const mongoose = require("mongoose");
-// const multer = require("multer");
 const cors = require("cors");
+require('dotenv').config();
 
 // Global variables
 const app = express();
@@ -25,7 +25,7 @@ app.use("/upload", require("./routes/imageRoute"));
 mongoose.set("strictQuery", false);
 mongoose
   .connect(
-    "mongodb+srv://crazysparrow:564793@cluster0.8aeyxsx.mongodb.net/toDoList_FullStack?retryWrites=true&w=majority"
+    process.env.DATABASE_URI
   )
   .then(() => {
     console.log("Connected to database");

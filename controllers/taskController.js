@@ -1,5 +1,6 @@
 const { validationResult, query } = require("express-validator");
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 const createTask = async (req, res) => {
   try {
@@ -230,17 +231,58 @@ const shareTask = async (req, res) => {
         .json({ message: "Incorrect data", errors: errors.array() });
     }
 
+    const shareToUser = await User.findOne({
+      _id: req.body.shareTo,
+    });
+
+    if (!shareToUser)
+      return res
+        .status(404)
+        .json({ message: "Could not find the user to share the task with" });
+
+    const shareFromUser = await User.findOne({
+      _id: req.userId,
+    });
+
+    if (!shareFromUser)
+      return res
+        .status(404)
+        .json({ message: "Could not find the user to share the task from" });
+
     const foundTask = await Task.findOneAndUpdate(
-      { _id: req.params.id },
       {
-        sharedWith: req.body.sharedWith,
+        user: req.userId,
+        _id: req.params.id,
       },
+      {
+        $push: {
+          sharedWith: {
+            userId: shareToUser._id,
+            username: shareToUser.username,
+          },
+        },
+      }
     );
 
     if (!foundTask)
       return res.status(404).json({ message: "Could not find the task" });
 
-    res.json(foundTask);
+    const doc = new Task({
+      title: `${foundTask.title} (shared from ${shareFromUser.username})`,
+      description: foundTask.description,
+      sharedWith: "already shared",
+      isCompleted: false,
+      deadline: foundTask.deadline,
+      dateOfCompletion: null,
+      user: req.body.shareTo,
+    });
+
+    const copiedTask = await doc.save();
+
+    if (!copiedTask)
+      return res.status(400).json({ message: "Could not create copied task" });
+
+    res.json(copiedTask);
   } catch (err) {
     console.log(err);
     res.status(500).json({
