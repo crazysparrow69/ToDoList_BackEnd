@@ -180,34 +180,20 @@ const updateTask = async (req, res) => {
   }
 
   try {
-    let taskData;
+    const taskData = {
+      title: req.body.title,
+      description: req.body.description,
+      categories: req.body.categories,
+      deadline: req.body.deadline,
+    };
     const isCompleted = req.body.isCompleted;
 
     if (isCompleted === true) {
-      taskData = {
-        title: req.body.title,
-        description: req.body.description,
-        categories: req.body.categories,
-        deadline: req.body.deadline,
-        isCompleted: true,
-        dateOfCompletion: new Date(),
-      };
+      taskData.isCompleted = true;
+      taskData.dateOfCompletion = new Date();
     } else if (isCompleted === false) {
-      taskData = {
-        title: req.body.title,
-        description: req.body.description,
-        categories: req.body.categories,
-        deadline: req.body.deadline,
-        isCompleted: false,
-        dateOfCompletion: null,
-      };
-    } else {
-      taskData = {
-        title: req.body.title,
-        description: req.body.description,
-        categories: req.body.categories,
-        deadline: req.body.deadline,
-      };
+      taskData.isCompleted = false;
+      taskData.dateOfCompletion = null;
     }
 
     await Task.findOneAndUpdate({ _id: taskId }, taskData);
