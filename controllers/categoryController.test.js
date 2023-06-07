@@ -2,7 +2,8 @@ const { validationResult } = require("express-validator");
 const {
   getOneCategory,
   getCategories,
-  createCategory
+  createCategory,
+  updateCategory
 } = require("./categoryController");
 const Category = require("../models/Category");
 const Task = require("../models/Task");
@@ -99,26 +100,60 @@ describe("getCategories", () => {
  });
 
  describe("createCategory", () => {
-    beforeEach(() => {
-      resetMocks();
-    });
-  
-    test("should create a new category", async () => {
-      const categoryData = { title: "New Category", color: "blue" };
-      const savedCategory = { _id: "category123", ...categoryData };
-      validationResult.mockReturnValue({ isEmpty: jest.fn().mockReturnValue(true) });
-      Category.findOne.mockResolvedValue(null);
-      Category.prototype.save.mockResolvedValue(savedCategory);
-  
-      req.body = categoryData;
-      await createCategory(req, result);
-  
-      expect(validationResult).toHaveBeenCalledWith(req);
-      expect(Category.findOne).toHaveBeenCalledWith({
-        user: "user123",
-        title: "New Category",
-      });
-      expect(Category.prototype.save).toHaveBeenCalled();
-      expect(result.json).toHaveBeenCalledWith(savedCategory);
-    });
+  beforeEach(() => {
+    resetMocks();
   });
+  
+  test("should create a new category", async () => {
+    const categoryData = { title: "New Category", color: "blue" };
+    const savedCategory = { _id: "category123", ...categoryData };
+    validationResult.mockReturnValue({ isEmpty: jest.fn().mockReturnValue(true) });
+    Category.findOne.mockResolvedValue(null);
+    Category.prototype.save.mockResolvedValue(savedCategory);
+  
+    req.body = categoryData;
+    await createCategory(req, result);
+  
+    expect(validationResult).toHaveBeenCalledWith(req);
+    expect(Category.findOne).toHaveBeenCalledWith({
+      user: "user123",
+      title: "New Category",
+    });
+    expect(Category.prototype.save).toHaveBeenCalled();
+    expect(result.json).toHaveBeenCalledWith(savedCategory);
+  });
+});
+
+describe("updateCategory", () => {
+  beforeEach(() => {
+    resetMocks();
+  });
+  
+  test("should update the category and associated tasks", async () => {
+    const updatedCategory = { _id: "category123", title: "Updated Category", color: "red" };
+    const foundTasks = [
+      { _id: "task1", categories: [{ _id: "category123", title: "Category 1", color: "blue" }] },
+      { _id: "task2", categories: [{ _id: "category123", title: "Category 1", color: "blue" }] },
+    ];
+    validationResult.mockReturnValue({ isEmpty: jest.fn().mockReturnValue(true) });
+    Category.findOneAndUpdate.mockResolvedValue(updatedCategory);
+    Task.find.mockResolvedValue(foundTasks);
+    Task.findOneAndUpdate.mockResolvedValue();
+  
+    req.params.id = "category123";
+    req.body = { title: "Updated Category", color: "red" };
+    await updateCategory(req, result);
+  
+    expect(validationResult).toHaveBeenCalledWith(req);
+    expect(Category.findOneAndUpdate).toHaveBeenCalledWith(
+      { _id: "category123" },
+      { title: "Updated Category", color: "red" }
+    );
+    expect(Task.find).toHaveBeenCalledWith({
+      categories: { $elemMatch: { _id: "category123" } },
+    });
+    expect(Task.findOneAndUpdate).toHaveBeenCalledTimes(2); // Once for each found task
+    expect(result.json).toHaveBeenCalledWith(updatedCategory);
+  });
+});
+  
