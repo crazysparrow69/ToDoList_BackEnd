@@ -32,7 +32,13 @@ const createTask = async (req, res) => {
 };
 
 const getAllTasks = async (req, res) => {
-  const { page = 1, limit = 10, deadline = "all", ...params } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    deadline = "all",
+    categories = [],
+    ...params
+  } = req.query;
 
   try {
     const date = new Date();
@@ -44,60 +50,52 @@ const getAllTasks = async (req, res) => {
     const day = date.getDate();
     const todayMidnight = new Date(`${year}-${month}-${day}`);
 
-    let queryParams;
+    let queryParams = {
+      user: req.userId,
+      ...params,
+    };
+
+    if (categories.length === 1) {
+      queryParams.categories = {
+        $elemMatch: {
+          _id: categories[0]._id,
+        },
+      };
+    } else if (categories.length > 1) {
+      const queryArr = [];
+      categories.forEach((elem) =>
+        queryArr.push({ categories: { $elemMatch: { _id: elem._id } } })
+      );
+      queryParams.$and = queryArr;
+    }
 
     if (deadline === "all") {
-      queryParams = {
-        user: req.userId,
-        ...params,
-      };
+      queryParams = queryParams;
     } else if (deadline === "day") {
-      queryParams = {
-        user: req.userId,
-        deadline: todayMidnight,
-        ...params,
-      };
+      queryParams.deadline = todayMidnight;
     } else if (deadline == "week") {
       const today = new Date(`${year}-${month}-${day}`);
-      queryParams = {
-        user: req.userId,
-        deadline: {
-          $gte: todayMidnight,
-          $lte: new Date(today.setDate(today.getDate() + 7)),
-        },
-        ...params,
+      queryParams.deadline = {
+        $gte: todayMidnight,
+        $lte: new Date(today.setDate(today.getDate() + 7)),
       };
     } else if (deadline === "month") {
       const today = new Date(`${year}-${month}-${day}`);
-      queryParams = {
-        user: req.userId,
-        deadline: {
-          $gte: todayMidnight,
-          $lte: new Date(today.setMonth(today.getMonth() + 1)),
-        },
-        ...params,
+      queryParams.deadline = {
+        $gte: todayMidnight,
+        $lte: new Date(today.setMonth(today.getMonth() + 1)),
       };
     } else if (deadline === "year") {
-      queryParams = {
-        user: req.userId,
-        deadline: {
-          $gte: todayMidnight,
-          $lte: new Date(`${year + 1}-${month}-${day}`),
-        },
-        ...params,
+      queryParams.deadline = {
+        $gte: todayMidnight,
+        $lte: new Date(`${year + 1}-${month}-${day}`),
       };
     } else if (deadline === "outdated") {
-      queryParams = {
-        user: req.userId,
-        deadline: {
-          $lt: todayMidnight,
-        },
+      queryParams.deadline = {
+        $lt: todayMidnight,
       };
     } else {
-      return res.status(404).json({
-        message: "Tasks page not found",
-        totalPages,
-      });
+      return res.status(404).json({ message: "Tasks page not found" });
     }
 
     const count = await Task.countDocuments(queryParams);
