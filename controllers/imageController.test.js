@@ -90,4 +90,14 @@ describe('getImage', () => {
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: 'Could not find an image' });
   });
+  
+  test('should handle errors', async () => {
+    Image.find.mockRejectedValue(new Error('Test error'));
+
+    await imageController.getImage(req, res);
+
+    expect(Image.find).toHaveBeenCalledWith({ userId: 'test-userId' });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Test error' });
+  });
 });
