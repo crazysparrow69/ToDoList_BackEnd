@@ -73,6 +73,33 @@ describe('passwordController', () => {
       expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ message: 'User not found' });
+
+      test('should return a 404 status code and "Invalid password" message if the password is invalid', async () => {
+        const validationResultMock = {
+          isEmpty: jest.fn().mockReturnValue(true),
+          array: jest.fn().mockReturnValue([]),
+        };
+  
+        const userMock = {
+          _id: 'user123',
+          password: await bcrypt.hash('password456', 10), // Hash a different password
+        };
+  
+        validationResult.mockReturnValue(validationResultMock);
+        User.findOne.mockResolvedValue(userMock);
+        bcrypt.compare.mockResolvedValue(false);
+  
+        await verifyPass(req, res);
+  
+        expect(validationResult).toHaveBeenCalled();
+        expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
+        expect(bcrypt.compare).toHaveBeenCalledWith(
+          req.body.password,
+          userMock.password
+        );
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.json).toHaveBeenCalledWith({ message: 'Invalid password' });
+      });
     });
   });
 });
