@@ -47,7 +47,8 @@ const getMe = async (req, res) => {
         message: "Cannot find user",
       });
     }
-    const { passwordHash, ...userData } = user._doc;
+    const { password, ...userData } = user._doc;
+
     res.json(userData);
   } catch (err) {
     console.log(err);

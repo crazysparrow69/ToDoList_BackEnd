@@ -14,8 +14,8 @@ const authValidation = [
 
 const updateUserValidation = [
   body("email", "Incorrect email").optional().isEmail(),
-  body("password", "Incorrect password").optional().isLength({ min: 5 }),
-  body("username", "Incorrect username").optional().isLength({ min: 3 }),
+  body("password", "Incorrect password").optional().isLength({ min: 5, max: 20 }),
+  body("username", "Incorrect username").optional().isLength({ min: 3, max: 20 }),
   body("avatarUrl", "Incorrect avatarUrl").optional(),
 ];
 

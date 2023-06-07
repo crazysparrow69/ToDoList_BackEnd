@@ -23,7 +23,10 @@ const getImage = async (req, res) => {
   try {
     const foundImage = await Image.find({ userId: req.userId });
 
-    if (!foundImage) return res.status(404).json({ message: "Could not find an image" });
+    if (foundImage.length === 0) {
+      const defaultImage = await Image.find({ _id: "6480c5db63c613be4a72be18"});
+      return res.json(defaultImage);
+    }
 
     res.json(foundImage);
   } catch (err) {

@@ -50,7 +50,7 @@ const getAllTasks = async (req, res) => {
     const day = date.getDate();
     const todayMidnight = new Date(`${year}-${month}-${day}`);
 
-    let queryParams = {
+    const queryParams = {
       user: req.userId,
       ...params,
     };
@@ -69,9 +69,7 @@ const getAllTasks = async (req, res) => {
       queryParams.$and = queryArr;
     }
 
-    if (deadline === "all") {
-      queryParams = queryParams;
-    } else if (deadline === "day") {
+    if (deadline === "day") {
       queryParams.deadline = todayMidnight;
     } else if (deadline == "week") {
       const today = new Date(`${year}-${month}-${day}`);
@@ -94,7 +92,7 @@ const getAllTasks = async (req, res) => {
       queryParams.deadline = {
         $lt: todayMidnight,
       };
-    } else {
+    } else if (deadline !== "all") {
       return res.status(404).json({ message: "Tasks page not found" });
     }
 
