@@ -1,7 +1,8 @@
 const { validationResult } = require("express-validator");
 const {
   getOneCategory,
-  getCategories
+  getCategories,
+  createCategory
 } = require("./categoryController");
 const Category = require("../models/Category");
 const Task = require("../models/Task");
@@ -76,23 +77,48 @@ describe("getOneCategory", () => {
 });
 
 describe("getCategories", () => {
+  beforeEach(() => {
+    resetMocks();
+  });
+  
+  test("should return the categories if found", async () => {
+    const categories = [
+      { _id: "category1", title: "Category 1" },
+      { _id: "category2", title: "Category 2" },
+    ];
+    Category.countDocuments.mockResolvedValue(2);
+    Category.find.mockResolvedValue(categories);
+  
+    req.query.page = 1;
+    req.query.limit = 10;
+    await getCategories(req, result);
+  
+    expect(Category.countDocuments).toHaveBeenCalledWith({ user: "user123" });
+    expect(Category.find).toHaveBeenCalledWith({ user: "user123" });
+  });
+ });
+
+ describe("createCategory", () => {
     beforeEach(() => {
       resetMocks();
     });
   
-    test("should return the categories if found", async () => {
-      const categories = [
-        { _id: "category1", title: "Category 1" },
-        { _id: "category2", title: "Category 2" },
-      ];
-      Category.countDocuments.mockResolvedValue(2);
-      Category.find.mockResolvedValue(categories);
+    test("should create a new category", async () => {
+      const categoryData = { title: "New Category", color: "blue" };
+      const savedCategory = { _id: "category123", ...categoryData };
+      validationResult.mockReturnValue({ isEmpty: jest.fn().mockReturnValue(true) });
+      Category.findOne.mockResolvedValue(null);
+      Category.prototype.save.mockResolvedValue(savedCategory);
   
-      req.query.page = 1;
-      req.query.limit = 10;
-      await getCategories(req, result);
+      req.body = categoryData;
+      await createCategory(req, result);
   
-      expect(Category.countDocuments).toHaveBeenCalledWith({ user: "user123" });
-      expect(Category.find).toHaveBeenCalledWith({ user: "user123" });
+      expect(validationResult).toHaveBeenCalledWith(req);
+      expect(Category.findOne).toHaveBeenCalledWith({
+        user: "user123",
+        title: "New Category",
+      });
+      expect(Category.prototype.save).toHaveBeenCalled();
+      expect(result.json).toHaveBeenCalledWith(savedCategory);
     });
   });
