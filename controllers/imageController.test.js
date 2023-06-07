@@ -55,4 +55,14 @@ describe('saveImage', () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ url: 'test-image' });
   });
+
+  test('should handle errors', async () => {
+    Image.find.mockRejectedValue(new Error('Test error'));
+
+    await imageController.saveImage(req, res);
+
+    expect(Image.find).toHaveBeenCalledWith({ userId: 'test-userId' });
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Test error' });
+  });
 });
