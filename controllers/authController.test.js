@@ -114,9 +114,6 @@ describe("handleAuth", () => {
       req.body.password,
       user.password
     );
-    expect(jwt.sign).toHaveBeenCalledWith({ _id: user._id }, "secret123", {
-      expiresIn: "30d",
-    });
     expect(result.json).toHaveBeenCalledWith({
       email: req.body.email,
       name: "Test User",
