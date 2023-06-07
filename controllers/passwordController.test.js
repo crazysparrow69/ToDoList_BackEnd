@@ -118,5 +118,24 @@ describe('passwordController', () => {
         errors: ['Invalid data'],
       });
     });
+
+    it('should return a 500 status code and "Internal server error" message if an error occurs', async () => {
+      const validationResultMock = {
+        isEmpty: jest.fn().mockReturnValue(true),
+        array: jest.fn().mockReturnValue([]),
+      };
+
+      validationResult.mockReturnValue(validationResultMock);
+      User.findOne.mockRejectedValue(new Error('Some error'));
+  
+      await verifyPass(req, result);
+  
+      expect(validationResult).toHaveBeenCalled();
+      expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
+      expect(result.status).toHaveBeenCalledWith(500);
+      expect(result.json).toHaveBeenCalledWith({
+        message: 'Internal server error',
+      });
+    });
   });
 });
