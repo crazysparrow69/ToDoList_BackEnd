@@ -52,4 +52,12 @@ describe("getOneCategory", () => {
     expect(result.status).toHaveBeenCalledWith(404);
     expect(result.json).toHaveBeenCalledWith({ message: "Could not find category" });
   });
+
+  test("should return 400 if id is not provided", async () => {
+    req.params.id = undefined;
+    await getOneCategory(req, result);
+
+    expect(result.status).toHaveBeenCalledWith(400);
+    expect(result.json).toHaveBeenCalledWith({ message: "Id required" });
+  });
 });
