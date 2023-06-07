@@ -9,6 +9,7 @@ const getOneUser = async (req, res) => {
     if (!user) return res.status(404).json({ message: "Could not find" });
 
     const { password, ...userData } = user._doc;
+    
     res.json(userData);
   } catch (err) {
     console.log(err);
@@ -71,27 +72,36 @@ const updateUser = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
 
-    const foundUser = await User.findOne({ email: req.params.id });
-    if (!foundUser) return res.status(404).json({ message: "Could not find" });
+    const { username = null, password = null, email = null } = req.body;
 
     let hashedPassword = null;
-    if (req.body.password) {
+    if (password) {
       const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(req.body.password, salt);
+      hashedPassword = await bcrypt.hash(password, salt);
+    }
+
+    const newUserData = {};
+    if (hashedPassword) {
+      newUserData.password = hashedPassword;
+    }
+
+    if (username) {
+      newUserData.username = username;
+    }
+
+    if (email) {
+      newUserData.email = email;
     }
 
     const user = await User.findOneAndUpdate(
       {
         _id: req.params.id,
       },
-      {
-        username: req.body.username,
-        password: hashedPassword,
-        email: req.body.email,
-      }
+      newUserData
     );
 
-    if (!user) return res.status(404).json({ message: "Could not find" });
+    if (!user)
+      return res.status(404).json({ message: "Could not find the user" });
 
     res.json({ message: "Success" });
   } catch (err) {
