@@ -3,7 +3,8 @@ const {
   getOneCategory,
   getCategories,
   createCategory,
-  updateCategory
+  updateCategory,
+  deleteCategory
 } = require("./categoryController");
 const Category = require("../models/Category");
 const Task = require("../models/Task");
@@ -156,4 +157,30 @@ describe("updateCategory", () => {
     expect(result.json).toHaveBeenCalledWith(updatedCategory);
   });
 });
+
+describe("deleteCategory", () => {
+  beforeEach(() => {
+    resetMocks();
+  });
+
+  test("should delete the category and update associated tasks", async () => {
+    const deletedCategory = { _id: "category123", title: "Category 1" };
+    const foundTasks = [
+      { _id: "task1", categories: [{ _id: "category123", title: "Category 1" }] },
+      { _id: "task2", categories: [{ _id: "category123", title: "Category 1" }] },
+    ];
+    Category.findOneAndDelete.mockResolvedValue(deletedCategory);
+    Task.find.mockResolvedValue(foundTasks);
+    Task.findOneAndUpdate.mockResolvedValue();
   
+    req.params.id = "category123";
+    await deleteCategory(req, result);
+  
+    expect(Category.findOneAndDelete).toHaveBeenCalledWith({ _id: "category123" });
+    expect(Task.find).toHaveBeenCalledWith({
+      categories: { $elemMatch: { _id: "category123" } },
+    });
+    expect(Task.findOneAndUpdate).toHaveBeenCalledTimes(2);
+    expect(result.json).toHaveBeenCalledWith(deletedCategory);
+  });
+});
