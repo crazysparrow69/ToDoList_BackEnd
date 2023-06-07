@@ -187,4 +187,15 @@ describe("getMe", () => {
       name: user._doc.name,
     });
   });
+
+  test("should return 500 if an error occurs", async () => {
+    User.findById.mockRejectedValue(new Error("Database error"));
+
+    await getMe(req, result);
+
+    expect(result.status).toHaveBeenCalledWith(500);
+    expect(result.json).toHaveBeenCalledWith({
+      message: "Internal server error",
+    });
+  });
 });
