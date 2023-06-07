@@ -48,7 +48,7 @@ const getMe = async (req, res) => {
       });
     }
     const { password, ...userData } = user._doc;
-    console.log(userData);
+
     res.json(userData);
   } catch (err) {
     console.log(err);
