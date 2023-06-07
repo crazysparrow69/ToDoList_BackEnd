@@ -89,5 +89,39 @@ describe("handleAuth", () => {
       message: "Invalid email or password",
     });
   });
+
+  test("should return user data and token if authentication is successful", async () => {
+    const errors = {
+      isEmpty: jest.fn(() => true),
+    };
+    const user = {
+      _id: "user_id",
+      _doc: {
+        email: req.body.email,
+        name: "Test User",
+        password: "hashed_password",
+      },
+    };
+    const token = "token123";
+    validationResult.mockReturnValue(errors);
+    User.findOne.mockResolvedValue(user);
+    bcrypt.compare.mockResolvedValue(true);
+    jwt.sign.mockReturnValue(token);
+
+    await handleAuth(req, result);
+
+    expect(bcrypt.compare).toHaveBeenCalledWith(
+      req.body.password,
+      user.password
+    );
+    expect(jwt.sign).toHaveBeenCalledWith({ _id: user._id }, "secret123", {
+      expiresIn: "30d",
+    });
+    expect(result.json).toHaveBeenCalledWith({
+      email: req.body.email,
+      name: "Test User",
+      token: token,
+    });
+  });
 });
 
