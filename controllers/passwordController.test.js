@@ -11,7 +11,7 @@ jest.mock('bcrypt');
 describe('passwordController', () => {
   // Mock request and response objects
   let req;
-  let res;
+  let result;
 
   beforeEach(() => {
     req = {
@@ -21,7 +21,7 @@ describe('passwordController', () => {
       },
     };
 
-    res = {
+    result = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
@@ -47,7 +47,7 @@ describe('passwordController', () => {
       User.findOne.mockResolvedValue(userMock);
       bcrypt.compare.mockResolvedValue(true);
 
-      await verifyPass(req, res);
+      await verifyPass(req, result);
 
       expect(validationResult).toHaveBeenCalled();
       expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
@@ -55,7 +55,7 @@ describe('passwordController', () => {
         req.body.password,
         userMock.password
       );
-      expect(res.json).toHaveBeenCalledWith({ message: 'Success' });
+      expect(result.json).toHaveBeenCalledWith({ message: 'Success' });
     });
 
     test('should return a 404 status code and "User not found" message if the user is not found', async () => {
@@ -67,38 +67,55 @@ describe('passwordController', () => {
       validationResult.mockReturnValue(validationResultMock);
       User.findOne.mockResolvedValue(null);
   
-      await verifyPass(req, res);
+      await verifyPass(req, result);
     
       expect(validationResult).toHaveBeenCalled();
       expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: 'User not found' });
+      expect(result.status).toHaveBeenCalledWith(404);
+      expect(result.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
 
-      test('should return a 404 status code and "Invalid password" message if the password is invalid', async () => {
-        const validationResultMock = {
-          isEmpty: jest.fn().mockReturnValue(true),
-          array: jest.fn().mockReturnValue([]),
-        };
+    test('should return a 404 status code and "Invalid password" message if the password is invalid', async () => {
+      const validationResultMock = {
+        isEmpty: jest.fn().mockReturnValue(true),
+        array: jest.fn().mockReturnValue([]),
+      };
   
-        const userMock = {
-          _id: 'user123',
-          password: await bcrypt.hash('password456', 10), // Hash a different password
-        };
+      const userMock = {
+        _id: 'user123',
+        password: await bcrypt.hash('password456', 10), // Hash a different password
+      };
   
-        validationResult.mockReturnValue(validationResultMock);
-        User.findOne.mockResolvedValue(userMock);
-        bcrypt.compare.mockResolvedValue(false);
+      validationResult.mockReturnValue(validationResultMock);
+      User.findOne.mockResolvedValue(userMock);
+      bcrypt.compare.mockResolvedValue(false);
   
-        await verifyPass(req, res);
+      await verifyPass(req, result);
   
-        expect(validationResult).toHaveBeenCalled();
-        expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
-        expect(bcrypt.compare).toHaveBeenCalledWith(
-          req.body.password,
-          userMock.password
-        );
-        expect(res.status).toHaveBeenCalledWith(404);
-        expect(res.json).toHaveBeenCalledWith({ message: 'Invalid password' });
+      expect(validationResult).toHaveBeenCalled();
+      expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        req.body.password,
+        userMock.password
+      );
+      expect(result.status).toHaveBeenCalledWith(404);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Invalid password' });
+    });
+
+    test('should return a 400 status code and validation errors if there are validation errors', async () => {
+      const validationResultMock = {
+        isEmpty: jest.fn().mockReturnValue(false),
+        array: jest.fn().mockReturnValue(['Invalid data']),
+      };
+  
+      validationResult.mockReturnValue(validationResultMock);
+      await verifyPass(req, result);
+  
+      expect(validationResult).toHaveBeenCalled();
+      expect(result.status).toHaveBeenCalledWith(400);
+      expect(result.json).toHaveBeenCalledWith({
+        message: 'Incorrect data',
+        errors: ['Invalid data'],
       });
     });
   });
