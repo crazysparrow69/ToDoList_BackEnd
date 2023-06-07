@@ -71,9 +71,6 @@ const updateUser = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
 
-    const foundUser = await User.findOne({ email: req.params.id });
-    if (!foundUser) return res.status(404).json({ message: "Could not find" });
-
     let hashedPassword = null;
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
@@ -91,7 +88,7 @@ const updateUser = async (req, res) => {
       }
     );
 
-    if (!user) return res.status(404).json({ message: "Could not find" });
+    if (!user) return res.status(404).json({ message: "Could not find the user" });
 
     res.json({ message: "Success" });
   } catch (err) {
