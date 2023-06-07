@@ -57,5 +57,22 @@ describe('passwordController', () => {
       );
       expect(res.json).toHaveBeenCalledWith({ message: 'Success' });
     });
+
+    test('should return a 404 status code and "User not found" message if the user is not found', async () => {
+      const validationResultMock = {
+        isEmpty: jest.fn().mockReturnValue(true),
+        array: jest.fn().mockReturnValue([]),
+      };
+    
+      validationResult.mockReturnValue(validationResultMock);
+      User.findOne.mockResolvedValue(null);
+  
+      await verifyPass(req, res);
+    
+      expect(validationResult).toHaveBeenCalled();
+      expect(User.findOne).toHaveBeenCalledWith({ _id: req.userId });
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
   });
 });
