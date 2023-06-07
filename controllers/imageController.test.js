@@ -39,4 +39,20 @@ describe('saveImage', () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ url: 'test-image' });
   });
+
+  test('should replace existing image and save a new one', async () => {
+    Image.find.mockResolvedValue({ image: 'existing-image' });
+    Image.create.mockResolvedValue({ image: 'test-image' });
+
+    await imageController.saveImage(req, res);
+
+    expect(Image.find).toHaveBeenCalledWith({ userId: 'test-userId' });
+    expect(Image.findOneAndDelete).toHaveBeenCalledWith({ userId: 'test-userId' });
+    expect(Image.create).toHaveBeenCalledWith({
+      image: 'test-image',
+      userId: 'test-userId',
+    });
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ url: 'test-image' });
+  });
 });
