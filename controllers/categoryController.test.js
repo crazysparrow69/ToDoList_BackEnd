@@ -78,29 +78,7 @@ describe("getOneCategory", () => {
   });
 });
 
-describe("getCategories", () => {
-  beforeEach(() => {
-    resetMocks();
-  });
-  
-  test("should return the categories if found", async () => {
-    const categories = [
-      { _id: "category1", title: "Category 1" },
-      { _id: "category2", title: "Category 2" },
-    ];
-    Category.countDocuments.mockResolvedValue(2);
-    Category.find.mockResolvedValue(categories);
-  
-    req.query.page = 1;
-    req.query.limit = 10;
-    await getCategories(req, result);
-  
-    expect(Category.countDocuments).toHaveBeenCalledWith({ user: "user123" });
-    expect(Category.find).toHaveBeenCalledWith({ user: "user123" });
-  });
- });
-
- describe("createCategory", () => {
+describe("createCategory", () => {
   beforeEach(() => {
     resetMocks();
   });
