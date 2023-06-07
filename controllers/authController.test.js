@@ -66,5 +66,28 @@ describe("handleAuth", () => {
       message: "Invalid email or password",
     });
   });
+
+  test("should return 404 if password is invalid", async () => {
+    const errors = {
+      isEmpty: jest.fn(() => true),
+    };
+    const user = {
+      password: "hashed_password",
+    };
+    validationResult.mockReturnValue(errors);
+    User.findOne.mockResolvedValue(user);
+    bcrypt.compare.mockResolvedValue(false);
+
+    await handleAuth(req, result);
+
+    expect(bcrypt.compare).toHaveBeenCalledWith(
+      req.body.password,
+      user.password
+    );
+    expect(result.status).toHaveBeenCalledWith(404);
+    expect(result.json).toHaveBeenCalledWith({
+      message: "Invalid email or password",
+    });
+  });
 });
 
