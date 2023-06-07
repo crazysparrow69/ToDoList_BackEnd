@@ -41,4 +41,15 @@ describe("getOneCategory", () => {
     expect(Category.findOne).toHaveBeenCalledWith({ _id: "category123" });
     expect(result.json).toHaveBeenCalledWith(foundCategory);
   });
+  
+  test("should return 404 if category not found", async () => {
+    Category.findOne.mockResolvedValue(null);
+
+    req.params.id = "category123";
+    await getOneCategory(req, result);
+
+    expect(Category.findOne).toHaveBeenCalledWith({ _id: "category123" });
+    expect(result.status).toHaveBeenCalledWith(404);
+    expect(result.json).toHaveBeenCalledWith({ message: "Could not find category" });
+  });
 });
