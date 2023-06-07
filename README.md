@@ -27,4 +27,8 @@ In the project directory, you can run.
 
 ### `$ npm run dev`
 
+For tests launching.
+
+### `$ npx jest`
+
 After BackEnd launch, you can run the [FrontEnd](https://github.com/Dimdim28/to_do_list_frontend) part of the project.
