@@ -169,4 +169,22 @@ describe("getMe", () => {
       message: "Cannot find user",
     });
   });
+
+  test("should return user data if user is found", async () => {
+    const user = {
+      _doc: {
+        email: "test@example.com",
+        name: "Test User",
+      },
+    };
+    User.findById.mockResolvedValue(user);
+
+    await getMe(req, result);
+
+    expect(User.findById).toHaveBeenCalledWith(req.userId);
+    expect(result.json).toHaveBeenCalledWith({
+      email: user._doc.email,
+      name: user._doc.name,
+    });
+  });
 });
