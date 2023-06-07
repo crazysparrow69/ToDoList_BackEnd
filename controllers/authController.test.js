@@ -140,3 +140,33 @@ describe("handleAuth", () => {
   });
 });
 
+describe("getMe", () => {
+  let result;
+  let req;
+
+  beforeEach(() => {
+    req = {
+      userId: "user_id",
+    };
+    result = {
+      status: jest.fn(() => result),
+      json: jest.fn(),
+    };
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("should return 404 if user is not found", async () => {
+    User.findById.mockResolvedValue(null);
+
+    await getMe(req, result);
+
+    expect(User.findById).toHaveBeenCalledWith(req.userId);
+    expect(result.status).toHaveBeenCalledWith(404);
+    expect(result.json).toHaveBeenCalledWith({
+      message: "Cannot find user",
+    });
+  });
+});
