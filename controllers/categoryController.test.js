@@ -60,4 +60,16 @@ describe("getOneCategory", () => {
     expect(result.status).toHaveBeenCalledWith(400);
     expect(result.json).toHaveBeenCalledWith({ message: "Id required" });
   });
+
+  test("should return 500 if an error occurs", async () => {
+    const error = new Error("Internal server error");
+    Category.findOne.mockRejectedValue(error);
+
+    req.params.id = "category123";
+    await getOneCategory(req, result);
+
+    expect(Category.findOne).toHaveBeenCalledWith({ _id: "category123" });
+    expect(result.status).toHaveBeenCalledWith(500);
+    expect(result.json).toHaveBeenCalledWith({ message: "Internal server error" });
+  });
 });
