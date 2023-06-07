@@ -123,5 +123,20 @@ describe("handleAuth", () => {
       token: token,
     });
   });
+
+  test("should return 500 if an error occurs", async () => {
+    const errors = {
+      isEmpty: jest.fn(() => true),
+    };
+    validationResult.mockReturnValue(errors);
+    User.findOne.mockRejectedValue(new Error("Database error"));
+
+    await handleAuth(req, result);
+
+    expect(result.status).toHaveBeenCalledWith(500);
+    expect(result.json).toHaveBeenCalledWith({
+      message: "Internal server error",
+    });
+  });
 });
 
