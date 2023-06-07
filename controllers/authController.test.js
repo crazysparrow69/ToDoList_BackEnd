@@ -49,5 +49,22 @@ describe("handleAuth", () => {
       errors: ["Error 1", "Error 2"],
     });
   });
+
+  test("should return 404 if user is not found", async () => {
+    const errors = {
+      isEmpty: jest.fn(() => true),
+    };
+    const user = null;
+    validationResult.mockReturnValue(errors);
+    User.findOne.mockResolvedValue(user);
+
+    await handleAuth(req, result);
+
+    expect(User.findOne).toHaveBeenCalledWith({ email: req.body.email });
+    expect(result.status).toHaveBeenCalledWith(404);
+    expect(result.json).toHaveBeenCalledWith({
+      message: "Invalid email or password",
+    });
+  });
 });
 
