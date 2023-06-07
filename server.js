@@ -11,13 +11,7 @@ const PORT = 5000;
 // Built-in middleware
 app.use(express.json());
 
-const corsOptions = {
-  origin: "https://to-do-list-frontend-dev.vercel.app",
-  methods: "GET, POST, PUT, DELETE, OPTIONS",
-  allowedHeaders: "Content-Type, Authorization",
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 // Routing
 app.use("/user", require("./routes/userRoute"));
@@ -33,6 +27,8 @@ mongoose
   .connect(process.env.DATABASE_URI)
   .then(() => {
     console.log("Connected to database");
-    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+    app.listen(process.env.PORT || PORT, () =>
+      console.log(`Server is running on port ${PORT}`)
+    );
   })
   .catch((err) => console.log("DB error", err));
