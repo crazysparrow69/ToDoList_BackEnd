@@ -66,3 +66,18 @@ describe('saveImage', () => {
     expect(res.json).toHaveBeenCalledWith({ message: 'Test error' });
   });
 });
+
+describe('getImage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should get an image successfully', async () => {
+    Image.find.mockResolvedValue({ image: 'test-image' });
+
+    await imageController.getImage(req, res);
+
+    expect(Image.find).toHaveBeenCalledWith({ userId: 'test-userId' });
+    expect(res.json).toHaveBeenCalledWith({ image: 'test-image' });
+  });
+});
