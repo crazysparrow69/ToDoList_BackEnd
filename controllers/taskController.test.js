@@ -15,7 +15,7 @@ jest.mock('../models/Task');
   
 describe('Task Controller', () => {
   let req;
-  let res;
+  let result;
   
   beforeEach(() => {
     req = {
@@ -25,7 +25,7 @@ describe('Task Controller', () => {
       userId: 'user123',
     };
   
-    res = {
+    result = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
@@ -36,25 +36,25 @@ describe('Task Controller', () => {
   });
   
   describe('createTask', () => {
-    it('should return an error if an internal server error occurs', async () => {
+    test('should return an error if an internal server error occurs', async () => {
       const error = new Error('Internal server error');
   
       Task.mockReturnValueOnce({
         save: jest.fn().mockRejectedValueOnce(error),
       });
   
-      await createTask(req, res);
+      await createTask(req, result);
   
       expect(validationResult).toHaveBeenCalledWith(req);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
+      expect(result.status).toHaveBeenCalledWith(500);
+      expect(result.json).toHaveBeenCalledWith({
         message: 'Internal server error',
       });
     });
   });
   
   describe('getAllTasks', () => {
-    it('should return all tasks with default parameters', async () => {
+    test('should return all tasks with default parameters', async () => {
       const count = 3;
       const tasks = [{ _id: 'task1' }, { _id: 'task2' }, { _id: 'task3' }];
       const totalPages = 1;
@@ -67,7 +67,7 @@ describe('Task Controller', () => {
         exec: jest.fn().mockResolvedValueOnce(tasks),
       });
   
-      await getAllTasks(req, res);
+      await getAllTasks(req, result);
   
       expect(Task.countDocuments).toHaveBeenCalledWith({
         user: req.userId,
@@ -75,7 +75,7 @@ describe('Task Controller', () => {
       expect(Task.find).toHaveBeenCalledWith({
         user: req.userId,
       });
-      expect(res.json).toHaveBeenCalledWith({
+      expect(result.json).toHaveBeenCalledWith({
         tasks,
         totalPages,
         currentPage,
@@ -84,94 +84,94 @@ describe('Task Controller', () => {
   });
 
   describe('getTask', () => {
-    it('should get a specific task', async () => {
+    test('should get a specific task', async () => {
       const taskId = 'task123';
       req.params.id = taskId;
   
       const foundTask = { _id: taskId, title: 'Task 1' };
       Task.findOne.mockResolvedValueOnce(foundTask);
   
-      await getTask(req, res);
+      await getTask(req, result);
   
       expect(Task.findOne).toHaveBeenCalledWith({ _id: taskId });
-      expect(res.json).toHaveBeenCalledWith(foundTask);
+      expect(result.json).toHaveBeenCalledWith(foundTask);
     });
   
-    it('should return an error if ID is missing', async () => {
-      await getTask(req, res);
+    test('should return an error if ID is missing', async () => {
+      await getTask(req, result);
   
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Id required' });
+      expect(result.status).toHaveBeenCalledWith(400);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Id required' });
     });
   
-    it('should return an error if the task is not found', async () => {
+    test('should return an error if the task is not found', async () => {
       const taskId = 'task123';
       req.params.id = taskId;
   
       Task.findOne.mockResolvedValueOnce(null);
   
-      await getTask(req, res);
+      await getTask(req, result);
   
       expect(Task.findOne).toHaveBeenCalledWith({ _id: taskId });
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Could not find the task' });
+      expect(result.status).toHaveBeenCalledWith(404);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Could not find the task' });
     });
   
     // Add more test cases for other scenarios
   });
   
   describe('deleteTask', () => {
-    it('should delete a specific task', async () => {
+    test('should delete a specific task', async () => {
       const taskId = 'task123';
       req.params.id = taskId;
   
       const deletedTask = { _id: taskId, title: 'Task 1' };
       Task.findOneAndDelete.mockResolvedValueOnce(deletedTask);
   
-      await deleteTask(req, res);
+      await deleteTask(req, result);
   
       expect(Task.findOneAndDelete).toHaveBeenCalledWith({ _id: taskId });
-      expect(res.json).toHaveBeenCalledWith(deletedTask);
+      expect(result.json).toHaveBeenCalledWith(deletedTask);
     });
   
-    it('should return an error if ID is missing', async () => {
-      await deleteTask(req, res);
+    test('should return an error if ID is missing', async () => {
+      await deleteTask(req, result);
   
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Id required' });
+      expect(result.status).toHaveBeenCalledWith(400);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Id required' });
     });
   
-    it('should return an error if the task is not found', async () => {
+    test('should return an error if the task is not found', async () => {
       const taskId = 'task123';
       req.params.id = taskId;
   
       Task.findOneAndDelete.mockResolvedValueOnce(null);
   
-      await deleteTask(req, res);
+      await deleteTask(req, result);
   
       expect(Task.findOneAndDelete).toHaveBeenCalledWith({ _id: taskId });
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Could not find the task' });
+      expect(result.status).toHaveBeenCalledWith(404);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Could not find the task' });
     });
   
     // Add more test cases for other scenarios
   });
   
   describe('updateTask', () => {
-    it('should return an error if ID is missing', async () => {
-      await updateTask(req, res);
+    test('should return an error if ID is missing', async () => {
+      await updateTask(req, result);
   
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Id required' });
+      expect(result.status).toHaveBeenCalledWith(400);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Id required' });
     });
   });
   
   describe('shareTask', () => {
-    it('should return an error if ID is missing', async () => {
-      await shareTask(req, res);
+    test('should return an error if ID is missing', async () => {
+      await shareTask(req, result);
   
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: 'Id required' });
+      expect(result.status).toHaveBeenCalledWith(400);
+      expect(result.json).toHaveBeenCalledWith({ message: 'Id required' });
     });
   });
 });
