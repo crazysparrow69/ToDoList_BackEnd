@@ -18,6 +18,7 @@ const createTask = async (req, res) => {
       user: req.userId,
       deadline: req.body.deadline ? new Date(req.body.deadline) : null,
       isCompleted: req.body.isCompleted,
+      links: req.body.links,
     });
 
     const task = await doc.save();
@@ -92,6 +93,8 @@ const getAllTasks = async (req, res) => {
       queryParams.deadline = {
         $lt: todayMidnight,
       };
+    } else if (deadline === "nodeadline") {
+      queryParams.deadline = null;
     } else if (deadline !== "all") {
       return res.status(404).json({ message: "Tasks page not found" });
     }
@@ -167,7 +170,7 @@ const deleteTask = async (req, res) => {
 const updateTask = async (req, res) => {
   const taskId = req.params.id;
   if (!taskId) return res.status(400).json({ message: "Id required" });
-  
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res
@@ -181,6 +184,7 @@ const updateTask = async (req, res) => {
       description: req.body.description,
       categories: req.body.categories,
       deadline: req.body.deadline,
+      links: req.body.links,
     };
     const isCompleted = req.body.isCompleted;
 
