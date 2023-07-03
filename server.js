@@ -2,7 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 
 // Global variables
 const app = express();
@@ -20,13 +20,10 @@ app.use("/category", require("./routes/categoryRoute"));
 app.use("/password", require("./routes/passwordRoute"));
 app.use("/upload", require("./routes/imageRoute"));
 
-
 // Connecting
 mongoose.set("strictQuery", false);
 mongoose
-  .connect(
-    process.env.DATABASE_URI
-  )
+  .connect(process.env.DATABASE_URI)
   .then(() => {
     console.log("Connected to database");
     app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
