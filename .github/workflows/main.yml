@@ -2,9 +2,9 @@ name: Test app
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, ci/cd ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, ci/cd ]
 
 jobs:
   build:

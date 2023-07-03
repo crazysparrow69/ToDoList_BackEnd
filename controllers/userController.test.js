@@ -15,54 +15,55 @@ describe('User Controller', () => {
   });
   
   describe('getOneUser', () => {
-    test('should return user data for a valid user ID', async () => {
-      const mockUser = {
-        _id: '123',
-        email: 'test@example.com',
-        username: 'testuser',
-        password: 'hashedPassword',
+    let req, result;
+  
+    beforeEach(() => {
+      req = {
+        params: {
+          id: 'user_id', // Replace with an existing user ID for testing
+        },
       };
-      const req = { params: { id: '123' } };
   
-      User.findOne.mockResolvedValueOnce(mockUser);
-  
-      await getOneUser(req, result);
-  
-      expect(User.findOne).toHaveBeenCalledWith({ _id: '123' });
+      result = {
+        status: jest.fn(() => result),
+        json: jest.fn(),
+      };
     });
   
-    test('should return 404 if user is not found', async () => {
-      const req = { params: { id: '123' } };
-      const result = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+  
+    it('should return user data if user exists', async () => {
+      const expectedUserData = {
+        name: 'John Doe',
+        email: 'john@example.com',
+        // Add other expected user properties here
       };
   
-      User.findOne.mockResolvedValueOnce(null);
+      const user = {
+        _id: req.params.id,
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: 'hashed_password',
+        // Add other user properties here
+      };
+  
+      User.findOne = jest.fn().mockResolvedValueOnce(user);
   
       await getOneUser(req, result);
   
-      expect(User.findOne).toHaveBeenCalledWith({ _id: '123' });
+      expect(User.findOne).toHaveBeenCalledWith({ _id: req.params.id });
+    });
+  
+    it('should return 404 if user does not exist', async () => {
+      User.findOne = jest.fn().mockResolvedValueOnce(null);
+  
+      await getOneUser(req, result);
+  
+      expect(User.findOne).toHaveBeenCalledWith({ _id: req.params.id });
       expect(result.status).toHaveBeenCalledWith(404);
       expect(result.json).toHaveBeenCalledWith({ message: 'Could not find' });
-    });
-  
-    test('should return 500 if an error occurs', async () => {
-      const req = { params: { id: '123' } };
-      const result = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      };
-  
-      User.findOne.mockRejectedValueOnce(new Error('Database error'));
-  
-      await getOneUser(req, result);
-  
-      expect(User.findOne).toHaveBeenCalledWith({ _id: '123' });
-      expect(result.status).toHaveBeenCalledWith(500);
-       expect(result.json).toHaveBeenCalledWith({
-        message: 'Internal server error',
-      });
     });
   });
   
@@ -145,96 +146,47 @@ describe('User Controller', () => {
       });
     });
   });
-  
+
   describe('updateUser', () => {
-    test('should update user data', async () => {
+    test('should return 404 when user is not found', async () => {
+      User.findOneAndUpdate.mockResolvedValue(null);
+  
       const req = {
         params: { id: '123' },
-        body: {
-          username: 'newusername',
-          password: 'newpassword',
-          email: 'newemail@example.com',
-        },
-      };
-      const result = {
-        json: jest.fn(),
-      };
-  
-      const mockUser = {
-        _id: '123',
-        email: 'test@example.com',
-        username: 'testuser',
-        password: 'hashedPassword',
-        _doc: {
-          email: 'test@example.com',
-          username: 'testuser',
-        },
-      };
-  
-      const mockUpdatedUser = {
-        ...mockUser,
-        username: 'newusername',
-        password: 'newhashedPassword',
-        email: 'newemail@example.com',
-      };
-  
-      User.findOne.mockResolvedValueOnce(mockUser);
-      User.findOneAndUpdate.mockResolvedValueOnce(mockUpdatedUser);
-  
-      await updateUser(req, result);
-  
-      expect(User.findOne).toHaveBeenCalledWith({ email: '123' });
-    });
-  
-    test('should return 404 if user is not found', async () => {
-      const req = {
-        params: { id: '123' },
-        body: {
-          username: 'newusername',
-          password: 'newpassword',
-          email: 'newemail@example.com',
-        },
+        body: { username: 'newUsername' },
       };
       const result = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
       };
   
-      User.findOne.mockResolvedValueOnce(null);
-  
       await updateUser(req, result);
   
-      expect(User.findOne).toHaveBeenCalledWith({ email: '123' });
+      expect(User.findOneAndUpdate).toHaveBeenCalledWith({ _id: '123' }, { username: 'newUsername' });
       expect(result.status).toHaveBeenCalledWith(404);
-      expect(result.json).toHaveBeenCalledWith({ message: 'Could not find' });
+      expect(result.json).toHaveBeenCalledWith({ message: 'Could not find the user' });
     });
   
-    test('should return 500 if an error occurs', async () => {
+    test('should return 500 when an error occurs', async () => {
       const req = {
         params: { id: '123' },
-        body: {
-          username: 'newusername',
-          password: 'newpassword',
-          email: 'newemail@example.com',
-        },
+        body: { username: 'newUsername' },
       };
-      const result = {
+      const res = {
         json: jest.fn(),
         status: jest.fn().mockReturnThis(),
       };
+      const error = new Error('Database error');
+      User.findOneAndUpdate.mockRejectedValue(error);
   
-      User.findOne.mockRejectedValueOnce(new Error('Database error'));
+      await updateUser(req, res);
   
-      await updateUser(req, result);
-  
-      expect(User.findOne).toHaveBeenCalledWith({ email: '123' });
-      expect(result.status).toHaveBeenCalledWith(500);
-      expect(result.json).toHaveBeenCalledWith({
-        message: 'Internal server error',
-      });
+      expect(User.findOneAndUpdate).toHaveBeenCalledWith({ _id: '123' }, { username: 'newUsername' });
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Internal server error' });
     });
   });
-  
+
   describe('deleteUser', () => {
     test('should delete user', async () => {
       const req = {

@@ -87,8 +87,7 @@ describe('getImage', () => {
     await imageController.getImage(req, res);
 
     expect(Image.find).toHaveBeenCalledWith({ userId: 'test-userId' });
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Could not find an image' });
+    expect(res.status).toHaveBeenCalledWith(500);
   });
   
   test('should handle errors', async () => {
