@@ -25,6 +25,16 @@ const createTaskValidation = [
   body("categories", "Categories must be array").optional().isArray(),
   body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
+  body("links", "Links must be an array of links")
+    .optional()
+    .isArray()
+    .custom((arr) => {
+      arr.forEach((elem) => {
+        const url = new URL(elem);
+        if (!url) return false;
+      });
+      return true;
+    }),
 ];
 
 const updateTaskValidation = [
@@ -36,6 +46,16 @@ const updateTaskValidation = [
   body("categories", "Categories must be array").optional().isArray(),
   body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
+  body("links", "Links must be an array of links")
+    .optional()
+    .isArray()
+    .custom((arr) => {
+      arr.forEach((elem) => {
+        const url = new URL(elem);
+        if (!url) return false;
+      });
+      return true;
+    }),
 ];
 
 const shareTaskValidation = [
