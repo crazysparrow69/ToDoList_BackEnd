@@ -3,14 +3,14 @@ const Image = require("../models/Image");
 const saveImage = async (req, res) => {
   const image = req.body.image;
   try {
-    const foundImage = await Image.find({ userId: req.userId });
+    const foundImage = await Image.find({ userId: req.user._id.toString() });
     if (foundImage) {
-      await Image.findOneAndDelete({ userId: req.userId });
+      await Image.findOneAndDelete({ userId: req.user._id.toString() });
     }
 
     const createdImage = await Image.create({
       image: image,
-      userId: req.userId
+      userId: req.req.user._id.toString()
     });
 
     res.status(201).json({ url: createdImage.image });
@@ -21,7 +21,7 @@ const saveImage = async (req, res) => {
 
 const getImage = async (req, res) => {
   try {
-    const foundImage = await Image.find({ userId: req.userId });
+    const foundImage = await Image.find({ userId: req.user._id.toString() });
 
     if (foundImage.length === 0) {
       const defaultImage = await Image.find({ _id: "6480c5db63c613be4a72be18"});

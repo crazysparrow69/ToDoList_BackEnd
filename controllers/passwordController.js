@@ -10,7 +10,7 @@ const verifyPass = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
 
-    const user = await User.findOne({ _id: req.userId });
+    const user = await User.findOne({ _id: req.user._id.toString() });
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isValidPass = await bcrypt.compare(req.body.password, user.password);

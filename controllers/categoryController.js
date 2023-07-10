@@ -25,7 +25,7 @@ const getCategories = async (req, res) => {
 
   try {
     const count = await Category.countDocuments({
-      user: req.userId,
+      user: req.user._id.toString(),
       ...params,
     });
     if (count === 0)
@@ -42,7 +42,7 @@ const getCategories = async (req, res) => {
         totalPages,
       });
 
-    const categories = await Category.find({ user: req.userId, ...params })
+    const categories = await Category.find({ user: req.user._id.toString(), ...params })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -69,7 +69,7 @@ const createCategory = async (req, res) => {
         .json({ message: "Incorrect data", errors: errors.array() });
     }
 
-    const foundCategory = await Category.findOne({ user: req.userId, title: req.body.title });
+    const foundCategory = await Category.findOne({ user: req.user._id.toString(), title: req.body.title });
     if (foundCategory) {
       console.log(foundCategory);
       return res.status(400).json({ message: "Title already in use" });
@@ -78,7 +78,7 @@ const createCategory = async (req, res) => {
     const doc = new Category({
       title: req.body.title,
       color: req.body.color,
-      user: req.userId,
+      user: req.user._id.toString(),
     });
 
     const category = await doc.save();

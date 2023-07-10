@@ -40,7 +40,7 @@ const handleAuth = async (req, res) => {
 
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user._id.toString());
 
     if (!user) {
       return res.status(404).json({
