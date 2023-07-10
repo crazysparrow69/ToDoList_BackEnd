@@ -113,38 +113,38 @@ const updateCategory = async (req, res) => {
     if (!category)
       return res.status(404).json({ message: "Could not find category" });
 
-    const categoryId = category._id.toString();
-    const foundTasks = await Task.find({
-      categories: { $elemMatch: { _id: categoryId } },
-    });
+    // const categoryId = category._id.toString();
+    // const foundTasks = await Task.find({
+    //   categories: { $elemMatch: { _id: categoryId } },
+    // });
 
-    const tasksToUpdate = [];
+    // const tasksToUpdate = [];
 
-    foundTasks.forEach((task) => {
-      tasksToUpdate.push({
-        taskId: task._id,
-        categories: task.categories.map((elem) => {
-          if (elem._id === categoryId) {
-            return {
-              _id: categoryId,
-              title: req.body.title ? req.body.title : category.title,
-              color: req.body.color ? req.body.color : category.color,
-            };
-          } else {
-            return elem;
-          }
-        }),
-      });
-    });
+    // foundTasks.forEach((task) => {
+    //   tasksToUpdate.push({
+    //     taskId: task._id,
+    //     categories: task.categories.map((elem) => {
+    //       if (elem._id === categoryId) {
+    //         return {
+    //           _id: categoryId,
+    //           title: req.body.title ? req.body.title : category.title,
+    //           color: req.body.color ? req.body.color : category.color,
+    //         };
+    //       } else {
+    //         return elem;
+    //       }
+    //     }),
+    //   });
+    // });
 
-    tasksToUpdate.forEach(async (task) => {
-      await Task.findOneAndUpdate(
-        { _id: task.taskId },
-        {
-          categories: task.categories,
-        }
-      );
-    });
+    // tasksToUpdate.forEach(async (task) => {
+    //   await Task.findOneAndUpdate(
+    //     { _id: task.taskId },
+    //     {
+    //       categories: task.categories,
+    //     }
+    //   );
+    // });
 
     res.json(category);
   } catch (err) {
