@@ -11,10 +11,10 @@ const taskSchema = new Schema(
       type: String,
       required: true,
     },
-    categories: {
-      type: Array,
-      default: [],
-    },
+    categories: [{
+      type: Schema.Types.ObjectId,
+      ref: "category"
+    }],
     sharedWith: {
       type: Array,
       default: [],
