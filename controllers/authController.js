@@ -40,16 +40,15 @@ const handleAuth = async (req, res) => {
 
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id.toString());
+    const user = await User.findById(req.user._id.toString(), "-password");
 
     if (!user) {
       return res.status(404).json({
         message: "Cannot find user",
       });
     }
-    const { password, ...userData } = user._doc;
 
-    res.json(userData);
+    res.json(user);
   } catch (err) {
     console.log(err);
     res.status(500).json({
