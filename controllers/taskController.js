@@ -52,6 +52,7 @@ const getAllTasks = async (req, res) => {
       });
 
     const tasks = await Task.find(req.queryParams)
+      .populate("categories")
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
