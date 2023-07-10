@@ -6,6 +6,7 @@ const {
   shareTaskValidation
 } = require("../validations/validations");
 const verifyJWT = require("../middleware/verifyJWT");
+const {setTaskQueryParams} = require("../middleware/setQueryParams");
 const {
   createTask,
   getAllTasks,
@@ -17,7 +18,7 @@ const {
 } = require("../controllers/taskController");
 
 router.post("/", verifyJWT, createTaskValidation, createTask)
-      .get("/", verifyJWT, getAllTasks)
+      .get("/", verifyJWT, setTaskQueryParams, getAllTasks)
       .get("/stats", verifyJWT, getTaskStats)
       .get("/:id", verifyJWT, getTask)
       .delete("/:id", verifyJWT, deleteTask)
