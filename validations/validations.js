@@ -2,27 +2,58 @@ const { body } = require("express-validator");
 
 const registerValidation = [
   body("email", "Incorrect email").isEmail(),
-  body("firstPass", "Incorrect password").isLength({ min: 5 }),
-  body("login", "Incorrect username").isLength({ min: 3 }),
-  body("avatarUrl", "Incorrect avatarUrl").optional().isURL(),
+  body("firstPass")
+    .isLength({ min: 5, max: 20 })
+    .withMessage("Password should be 5-20 characters long")
+    .isAlphanumeric()
+    .withMessage("Password should only consist of numbers and letters"),
+  body("login")
+    .isLength({ min: 3, max: 20 })
+    .withMessage("Username should be 3-20 characters long")
+    .isAlphanumeric()
+    .withMessage("Username should only consist of numbers and letters"),
 ];
 
 const authValidation = [
   body("email", "Incorrect email").isEmail(),
-  body("password", "Incorrect password").isLength({ min: 5 }),
+  body("password")
+    .isLength({ min: 5, max: 20 })
+    .withMessage("Password should be 5-20 characters long")
+    .isAlphanumeric()
+    .withMessage("Password should only consist of numbers and letters"),
 ];
 
 const updateUserValidation = [
   body("email", "Incorrect email").optional().isEmail(),
-  body("password", "Incorrect password").optional().isLength({ min: 5, max: 20 }),
-  body("username", "Incorrect username").optional().isLength({ min: 3, max: 20 }),
+  body("password")
+    .optional()
+    .isLength({ min: 5, max: 20 })
+    .withMessage("Password should be 5-20 characters long")
+    .isAlphanumeric()
+    .withMessage("Password should only consist of numbers and letters"),
+  body("username")
+    .isLength({ min: 3, max: 20 })
+    .withMessage("Username should be 3-20 characters long")
+    .isAlphanumeric()
+    .withMessage("Username should only consist of numbers and letters"),
   body("avatarUrl", "Incorrect avatarUrl").optional(),
 ];
 
 const createTaskValidation = [
-  body("title", "Enter title").isString().isLength({ min: 3 }),
-  body("description", "Enter description").isString().isLength({ min: 3 }),
-  body("categories", "Categories must be array").optional().isArray(),
+  body("title")
+    .isString()
+    .withMessage("Title should be string")
+    .isLength({ min: 3, max: 50 })
+    .withMessage("Title should be 3-50 characters long"),
+  body("description")
+    .isString()
+    .withMessage("Description should be string")
+    .isLength({ min: 3, max: 200 })
+    .withMessage("Description should be 3-200 characters long"),
+  body("categories")
+    .optional()
+    .isArray()
+    .withMessage("Categories should be array"),
   body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
   body("links", "Links must be an array of links")
@@ -38,12 +69,22 @@ const createTaskValidation = [
 ];
 
 const updateTaskValidation = [
-  body("title", "Enter title").optional().isString().isLength({ min: 3 }),
-  body("description", "Enter description")
+  body("title")
     .optional()
     .isString()
-    .isLength({ min: 3 }),
-  body("categories", "Categories must be array").optional().isArray(),
+    .withMessage("Title should be string")
+    .isLength({ min: 3, max: 50 })
+    .withMessage("Title should be 3-50 characters long"),
+  body("description")
+    .optional()
+    .isString()
+    .withMessage("Description should be string")
+    .isLength({ min: 3, max: 200 })
+    .withMessage("Description should be 3-200 characters long"),
+  body("categories")
+    .optional()
+    .isArray()
+    .withMessage("Categories should be array"),
   body("deadline", "For deadline use Date").optional().isString(),
   body("isCompleted", "isCompleted must be boolean").optional().isBoolean(),
   body("links", "Links must be an array of links")
@@ -59,21 +100,46 @@ const updateTaskValidation = [
 ];
 
 const shareTaskValidation = [
-  body("shareTo", "Requires id of the user you want to share the task with").isString(),
+  body(
+    "shareTo",
+    "Requires id of the user you want to share the task with"
+  ).isString(),
 ];
 
 const createCategoryValidation = [
-  body("title", "Enter title").isString().isLength({ min: 3 }),
-  body("color", "Enter color").isString().isLength({ min: 3 }),
+  body("title")
+    .isString()
+    .withMessage("Title should be string")
+    .isLength({ min: 3, max: 20 })
+    .withMessage("Title should be 3-20 characters long"),
+  body("color")
+    .isString()
+    .withMessage("Color should be string")
+    .isLength({ max: 20 })
+    .withMessage("Color should be maximum 20 characters long"),
 ];
 
 const updateCategoryValidation = [
-  body("title", "Enter title").isString().isLength({ min: 3 }).optional(),
-  body("color", "Enter color").isString().isLength({ min: 3 }).optional(),
+  body("title")
+    .optional()
+    .isString()
+    .withMessage("Title should be string")
+    .isLength({ min: 3, max: 20 })
+    .withMessage("Title should be 3-20 characters long"),
+  body("color")
+    .optional()
+    .isString()
+    .withMessage("Color should be string")
+    .isLength({ max: 20 })
+    .withMessage("Color should be maximum 20 characters long"),
 ];
 
 const verifyPassValidation = [
-  body("password", "Enter password").isString().isLength({ min: 5 })
+  body("password")
+    .isLength({ min: 5, max: 20 })
+    .withMessage("Password should be 5-20 characters long")
+    .isAlphanumeric()
+    .withMessage("Password should only consist of numbers and letters"),
 ];
 
 module.exports = {
@@ -85,5 +151,5 @@ module.exports = {
   shareTaskValidation,
   createCategoryValidation,
   updateCategoryValidation,
-  verifyPassValidation
+  verifyPassValidation,
 };
