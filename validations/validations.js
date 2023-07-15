@@ -74,7 +74,7 @@ const updateTaskValidation = [
   param("id", "Requires id of the task").custom(async (value) => {
     const foundTask = await Task.findById(value);
     return foundTask ? true : false;
-  }),
+  }).withMessage("Task does not exist"),
   body("title")
     .optional()
     .isString()
