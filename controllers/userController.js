@@ -34,6 +34,7 @@ const createUser = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Incorrect data", errors: errors.array() });
+
     const foundUser = await User.findOne({ email: req.body.email });
     if (foundUser)
       return res.status(400).json({ message: "You already have account" });
