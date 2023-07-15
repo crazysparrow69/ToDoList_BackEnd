@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { validationResult } = require("express-validator");
 const Category = require("../models/Category");
 const Task = require("../models/Task");
@@ -94,7 +95,6 @@ const createCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
   try {
-    if (!req.params.id) return res.status(400).json({ message: "Id required" });
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
@@ -110,8 +110,8 @@ const updateCategory = async (req, res) => {
       }
     );
 
-    if (!category)
-      return res.status(404).json({ message: "Could not find category" });
+    // if (!category)
+    //   return res.status(404).json({ message: "Could not find category" });
 
     // const categoryId = category._id.toString();
     // const foundTasks = await Task.find({
@@ -165,7 +165,7 @@ const deleteCategory = async (req, res) => {
       return res.status(404).json({ message: "Could not find category" });
 
     const foundTasks = await Task.find({
-      categories: { $elemMatch: { _id: categoryId } },
+      categories: { $elemMatch: { _id: mongoose.Types.ObjectId(categoryId)}},
     });
 
     const tasksToUpdate = [];
