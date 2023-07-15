@@ -1,4 +1,6 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
+const Category = require("../models/Category");
+const Task = require("../models/Task");
 
 const registerValidation = [
   body("email", "Incorrect email").isEmail(),
@@ -69,6 +71,10 @@ const createTaskValidation = [
 ];
 
 const updateTaskValidation = [
+  param("id", "Requires id of the task").custom(async (value) => {
+    const foundTask = await Task.findById(value);
+    return foundTask ? true : false;
+  }),
   body("title")
     .optional()
     .isString()
@@ -120,6 +126,12 @@ const createCategoryValidation = [
 ];
 
 const updateCategoryValidation = [
+  param("id", "Requires id of the category")
+    .custom(async (value) => {
+      const foundCategory = await Category.findById(value);
+      return foundCategory ? true : false;
+    })
+    .withMessage("Category does not exist"),
   body("title")
     .optional()
     .isString()
