@@ -1,6 +1,7 @@
 const { validationResult, query } = require("express-validator");
 const Task = require("../models/Task");
 const User = require("../models/User");
+const mongoose = require("mongoose");
 
 const createTask = async (req, res) => {
   try {

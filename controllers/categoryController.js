@@ -165,7 +165,7 @@ const deleteCategory = async (req, res) => {
       return res.status(404).json({ message: "Could not find category" });
 
     const foundTasks = await Task.find({
-      categories: { $elemMatch: { _id: mongoose.Types.ObjectId(categoryId)}},
+      categories: mongoose.Types.ObjectId(categoryId),
     });
 
     const tasksToUpdate = [];
@@ -173,7 +173,9 @@ const deleteCategory = async (req, res) => {
     foundTasks.forEach((task) => {
       tasksToUpdate.push({
         taskId: task._id,
-        categories: task.categories.filter((elem) => elem._id !== categoryId),
+        categories: task.categories.filter(
+          (elem) => elem.toString() !== categoryId
+        ),
       });
     });
 
