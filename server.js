@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const helmet = require("helmet");
 require("dotenv").config();
 
 // Global variables
@@ -11,6 +12,7 @@ const PORT = 5000;
 // Built-in middleware
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
 
 // Routing
 app.use("/user", require("./routes/userRoute"));
