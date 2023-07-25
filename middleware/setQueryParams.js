@@ -25,9 +25,9 @@ const setTaskQueryParams = (req, res, next) => {
     };
 
     if (categories.length === 1) {
-      queryParams.categories = mongoose.Types.ObjectId(categories[0]._id);
+      queryParams.categories = mongoose.Types.ObjectId(categories[0]);
     } else if (categories.length > 1) {
-      const categoriesIds = req.query.categories.map(elem => mongoose.Types.ObjectId(elem._id));
+      const categoriesIds = req.query.categories.map(elem => mongoose.Types.ObjectId(elem));
       queryParams.categories = { $all: categoriesIds };
     }
 
