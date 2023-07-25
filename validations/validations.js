@@ -45,12 +45,12 @@ const createTaskValidation = [
   body("title")
     .isString()
     .withMessage("Title should be string")
-    .isLength({ min: 3, max: 50 })
+    .isLength({ min: 3, max: 200 })
     .withMessage("Title should be 3-50 characters long"),
   body("description")
     .isString()
     .withMessage("Description should be string")
-    .isLength({ min: 3, max: 200 })
+    .isLength({ min: 3, max: 1000 })
     .withMessage("Description should be 3-200 characters long"),
   body("categories")
     .optional()
@@ -79,13 +79,13 @@ const updateTaskValidation = [
     .optional()
     .isString()
     .withMessage("Title should be string")
-    .isLength({ min: 3, max: 50 })
+    .isLength({ min: 3, max: 200 })
     .withMessage("Title should be 3-50 characters long"),
   body("description")
     .optional()
     .isString()
     .withMessage("Description should be string")
-    .isLength({ min: 3, max: 200 })
+    .isLength({ min: 3, max: 1000 })
     .withMessage("Description should be 3-200 characters long"),
   body("categories")
     .optional()
