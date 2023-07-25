@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const setTaskQueryParams = (req, res, next) => {
   const {
     page = 1,
@@ -23,17 +25,10 @@ const setTaskQueryParams = (req, res, next) => {
     };
 
     if (categories.length === 1) {
-      queryParams.categories = {
-        $elemMatch: {
-          _id: categories[0]._id,
-        },
-      };
+      queryParams.categories = mongoose.Types.ObjectId(categories[0]._id);
     } else if (categories.length > 1) {
-      const queryArr = [];
-      categories.forEach((elem) =>
-        queryArr.push({ categories: { $elemMatch: { _id: elem._id } } })
-      );
-      queryParams.$and = queryArr;
+      const categoriesIds = req.query.categories.map(elem => mongoose.Types.ObjectId(elem._id));
+      queryParams.categories = { $all: categoriesIds };
     }
 
     if (deadline === "day") {
@@ -65,6 +60,7 @@ const setTaskQueryParams = (req, res, next) => {
       return res.status(404).json({ message: "Tasks page not found" });
     }
 
+    console.log(queryParams);
     req.queryParams = queryParams;
     next();
   } catch (err) {
