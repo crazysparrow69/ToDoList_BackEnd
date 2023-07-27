@@ -60,7 +60,6 @@ const setTaskQueryParams = (req, res, next) => {
       return res.status(404).json({ message: "Tasks page not found" });
     }
 
-    console.log(queryParams);
     req.queryParams = queryParams;
     next();
   } catch (err) {
