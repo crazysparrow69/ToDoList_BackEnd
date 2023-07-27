@@ -24,7 +24,7 @@ const getImage = async (req, res) => {
     const foundImage = await Image.find({ userId: req.user._id.toString() });
 
     if (foundImage.length === 0) {
-      const defaultImage = await Image.find({ _id: "64b3efc8690ecc9faf39bd78"});
+      const defaultImage = await Image.find({ _id: "6480c5db63c613be4a72be18"});
       return defaultImage ? res.json(defaultImage) : res.sendStatus(204);
     }
 
