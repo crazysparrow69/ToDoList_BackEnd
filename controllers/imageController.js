@@ -10,7 +10,7 @@ const saveImage = async (req, res) => {
 
     const createdImage = await Image.create({
       image: image,
-      userId: req.req.user._id.toString()
+      userId: req.user._id.toString()
     });
 
     res.status(201).json({ url: createdImage.image });
