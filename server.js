@@ -6,7 +6,7 @@ require('dotenv').config();
 
 // Global variables
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Built-in middleware
 app.use(express.json());
